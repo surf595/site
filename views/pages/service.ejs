@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<section class="hero">
+  <h1><%= service.title %></h1>
+  <p><%= service.details %></p>
+  <p><a class="btn" href="/booking">Выбрать время</a></p>
+</section>
+<section class="grid two">
+  <article class="card"><h2>Для кого</h2><p>Для взрослых, которым важно бережно разобрать текущее состояние и найти устойчивый рабочий ритм.</p></article>
+  <article class="card"><h2>Как проходит</h2><p>Первая встреча — ориентировка и контракт. Далее — регулярные сессии с понятными рамками.</p></article>
+  <article class="card"><h2>Условия</h2><p>Подробные правила оплаты, отмены и переноса — на странице <a href="/terms">Terms</a>.</p></article>
+  <article class="card"><h2>Вопросы</h2><p>Ответы на частые вопросы: <a href="/faq">FAQ</a>.</p></article>
+</section>
+<%- include('../partials/footer') %>

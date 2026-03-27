@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<section class="hero">
+  <h1>Запись отправлена</h1>
+  <p>Спасибо. Заявка принята. Предпочтительный формат: <strong><%= selectedFormat %></strong>.</p>
+  <p>Мы свяжемся с вами и подтвердим время встречи.</p>
+</section>
+<section class="card">
+  <h2>Что дальше</h2>
+  <ul>
+    <li>Проверьте почту/мессенджер для подтверждения времени.</li>
+    <li>При необходимости переноса используйте <a href="/terms">правила переноса и отмены</a>.</li>
+    <li>Если есть организационный вопрос — <a href="/contacts">свяжитесь</a>.</li>
+  </ul>
+  <p><a class="btn" href="/booking">Новая запись</a></p>
+</section>
+<%- include('../partials/footer') %>
