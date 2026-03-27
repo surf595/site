@@ -63,6 +63,8 @@ node --check server.js
 - `STAGE1_MOBILE_FIRST_UX_CARCASS.md`
 - `P0_MVP_PAGES.md`
 - `p0/structure.json`
+- `DESIGN_TEAM_BRIEF.md`
+- `DESIGN_EXECUTION_PLAN.md`
 # site
 
 ## Документы
