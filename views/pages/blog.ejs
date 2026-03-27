@@ -1,0 +1,16 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<section class="hero">
+  <h1>Блог</h1>
+  <p>Материалы для спокойной ориентировки перед обращением.</p>
+</section>
+<section class="grid two">
+  <% posts.forEach((post) => { %>
+    <article class="card">
+      <h2><a href="/blog/<%= post.slug %>"><%= post.title %></a></h2>
+      <p><%= post.excerpt %></p>
+      <p><a href="/services/individual">Перейти к услуге</a> · <a href="/booking">К записи</a></p>
+    </article>
+  <% }) %>
+</section>
+<%- include('../partials/footer') %>
