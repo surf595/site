@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "name": "canonical-p0-mvp-structure",
+  "primary_locale": "ru",
+  "pages": [
+    {
+      "id": "home",
+      "title": "Главная",
+      "path": "/",
+      "role": "Быстрое позиционирование + вход в запись",
+      "primary_cta": "Записаться",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["hero", "trust_bar", "concerns_cards", "process", "about_teaser", "boundaries_teaser", "faq_teaser", "final_cta"]
+    },
+    {
+      "id": "services",
+      "title": "Услуги",
+      "path": "/services",
+      "role": "Выбор формата",
+      "primary_cta": "Выбрать формат",
+      "primary_cta_target": "/services/individual",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["hero", "service_cards", "selection_help", "cta"]
+    },
+    {
+      "id": "service_individual",
+      "title": "Индивидуальная работа",
+      "path": "/services/individual",
+      "role": "Детали основной услуги",
+      "primary_cta": "Выбрать время",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["hero", "for_whom", "first_session", "pricing", "faq", "cta"]
+    },
+    {
+      "id": "about",
+      "title": "О специалисте",
+      "path": "/about",
+      "role": "Профессиональное доверие",
+      "primary_cta": "Записаться",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["intro", "credentials", "approach", "boundaries_link", "cta"]
+    },
+    {
+      "id": "boundaries",
+      "title": "Границы и безопасность",
+      "path": "/about/boundaries",
+      "role": "Безопасность и рамки",
+      "primary_cta": "Выбрать время",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["principles", "exceptions", "contact_boundaries", "rules_short", "cta"]
+    },
+    {
+      "id": "booking",
+      "title": "Запись",
+      "path": "/booking",
+      "role": "Основной узел конверсии",
+      "primary_cta": "Подтвердить запись",
+      "primary_cta_target": "/booking/confirmed",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["format_select", "slots", "form", "consent_checkbox", "rules_short", "submit"],
+      "form_fields": [
+        {"name": "display_name", "required": true, "note": "имя или псевдоним"},
+        {"name": "contact", "required": true, "note": "email и/или телефон/мессенджер"},
+        {"name": "comment", "required": false, "note": "опционально"}
+      ]
+    },
+    {
+      "id": "booking_confirmed",
+      "title": "Подтверждение записи",
+      "path": "/booking/confirmed",
+      "role": "Пост-запись, следующие шаги",
+      "primary_cta": "Добавить в календарь",
+      "primary_cta_target": "/booking/confirmed#calendar",
+      "secondary_actions": ["Связаться", "Перенос/отмена"],
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["success", "session_meta", "prep_info", "calendar", "contact"]
+    },
+    {
+      "id": "privacy",
+      "title": "Политика конфиденциальности",
+      "path": "/privacy",
+      "role": "Прозрачность обработки данных",
+      "primary_cta": "Вернуться к записи",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["summary", "data_usage", "user_rights", "return_cta"]
+    },
+    {
+      "id": "consent",
+      "title": "Согласие на обработку данных",
+      "path": "/consent",
+      "role": "Юридическое согласие",
+      "primary_cta": "Вернуться к записи",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["summary", "consent_terms", "withdrawal", "return_cta"]
+    },
+    {
+      "id": "terms",
+      "title": "Terms: оплата/перенос/отмена",
+      "path": "/terms",
+      "role": "Оплата/перенос/отмена",
+      "primary_cta": "Вернуться к записи",
+      "primary_cta_target": "/booking",
+      "footer_legal_links": ["/privacy", "/consent", "/terms"],
+      "sections": ["payment", "reschedule", "cancellation", "return_cta"]
+    }
+  ],
+  "global_navigation": {
+    "header": ["/", "/about", "/services", "/booking"],
+    "mobile_menu": ["/", "/about", "/services", "/faq", "/contact", "/booking"],
+    "sticky_cta": "Записаться"
+  },
+  "required_flows": [
+    ["/", "/booking", "/booking/confirmed"],
+    ["/", "/about", "/about/boundaries", "/booking"],
+    ["/services", "/services/individual", "/booking"],
+    ["/booking", "/privacy", "/booking"],
+    ["/booking", "/consent", "/booking"],
+    ["/booking", "/terms", "/booking"]
+  ]
+}

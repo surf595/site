@@ -1,0 +1,12 @@
+{
+  "name": "psychology-practice-site",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Русскоязычный сайт частной психологической практики",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "check:p0": "python3 scripts/validate_p0_structure.py"
+  }
+}

@@ -1,0 +1,14 @@
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="/">Психологическая практика</a>
+    <button class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-nav">Меню</button>
+    <nav id="site-nav" class="main-nav" data-main-nav aria-label="Главное меню">
+      <ul>
+        <% nav.forEach((item) => { %>
+          <li><a href="<%= item.href %>"><%= item.label %></a></li>
+        <% }) %>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main class="container">

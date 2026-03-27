@@ -1,0 +1,18 @@
+</main>
+<div class="sticky-cta">
+  <a class="btn" href="/booking">Записаться</a>
+</div>
+<footer class="site-footer">
+  <div class="container">
+    <p class="muted">© <%= new Date().getFullYear() %> Частная психологическая практика. Сайт не предназначен для экстренной помощи.</p>
+    <nav class="footer-links" aria-label="Юридическая навигация">
+      <a href="/contacts">Контакты</a>
+      <% legalNav.forEach((item) => { %>
+        <a href="<%= item.href %>"><%= item.label %></a>
+      <% }) %>
+    </nav>
+  </div>
+</footer>
+<script src="/site.js" defer></script>
+</body>
+</html>
