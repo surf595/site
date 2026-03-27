@@ -1,1 +1,43 @@
-# site
+# Психологическая практика — рабочий MVP сайта
+
+Сайт реализован как self-contained Node.js приложение (без внешних npm-зависимостей), mobile-first и на русском языке.
+
+## Что реализовано
+- P0 страницы: `/`, `/services`, `/services/individual`, `/about`, `/about/boundaries`, `/booking`, `/booking/confirmed`, `/privacy`, `/consent`, `/terms`.
+- P1 страницы: `/format`, `/faq`, `/contacts`, `/about/approach`, `/blog`, `/blog/:slug`, `/topics/:slug`.
+- Форма записи с серверной валидацией, honeypot, rate-limit и success redirect.
+- SEO-база: уникальные metadata, canonical, Open Graph, `robots.txt`, `sitemap.xml`.
+- Перелинковка сценариев: Home→Booking, Home→About→Booking, Blog/Topic→Service→Booking, Booking→Legal→Booking.
+
+## Локальный запуск
+```bash
+node server.js
+```
+Сайт будет доступен на `http://localhost:3000`.
+
+## Проверки
+```bash
+python3 scripts/validate_p0_structure.py
+node --check server.js
+```
+
+## Переменные окружения
+- `PORT` — порт сервера (по умолчанию `3000`)
+- `SITE_URL` — базовый URL для canonical/OG/sitemap (по умолчанию `http://localhost:3000`)
+
+## Деплой
+Подходит любой Node.js хостинг (Render, Fly.io, Railway, VPS):
+1. Скопировать репозиторий
+2. Указать `SITE_URL` и при необходимости `PORT`
+3. Запустить `node server.js`
+
+## Важные TODO перед production
+- Заменить placeholder-контакты в `/contacts`.
+- Провести финальный юридический просмотр страниц `/privacy`, `/consent`, `/terms`.
+- Подключить продовую интеграцию отправки заявок (email/CRM endpoint).
+
+## Проектная документация
+- `TECH_SPEC_SITE_STRUCTURE.md`
+- `STAGE1_MOBILE_FIRST_UX_CARCASS.md`
+- `P0_MVP_PAGES.md`
+- `p0/structure.json`

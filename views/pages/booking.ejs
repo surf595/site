@@ -1,0 +1,42 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<section class="hero">
+  <h1>Запись на первую встречу</h1>
+  <p>Минимум полей, ясные условия и прозрачная обработка данных.</p>
+</section>
+<section class="form-wrap">
+  <% if (errors.form) { %><p class="banner"><%= errors.form %></p><% } %>
+  <form method="post" action="/booking" novalidate>
+    <label for="name">Имя или псевдоним</label>
+    <input id="name" name="name" value="<%= values.name || '' %>" autocomplete="name" required />
+    <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
+
+    <label for="contact">Email или телефон/мессенджер</label>
+    <input id="contact" name="contact" value="<%= values.contact || '' %>" autocomplete="email" required />
+    <% if (errors.contact) { %><small class="error"><%= errors.contact %></small><% } %>
+
+    <label for="format">Предпочтительный формат</label>
+    <select id="format" name="format" required>
+      <option value="">Выберите</option>
+      <option value="онлайн" <%= values.format === 'онлайн' ? 'selected' : '' %>>Онлайн</option>
+      <option value="очно" <%= values.format === 'очно' ? 'selected' : '' %>>Очно (по согласованию)</option>
+    </select>
+    <% if (errors.format) { %><small class="error"><%= errors.format %></small><% } %>
+
+    <label for="message">Комментарий (опционально)</label>
+    <textarea id="message" name="message" rows="4"><%= values.message || '' %></textarea>
+
+    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+
+    <label>
+      <input type="checkbox" name="consent" value="yes" <%= values.consent ? 'checked' : '' %> />
+      Я согласен(на) на обработку данных и ознакомлен(а) с <a href="/privacy">Privacy</a>, <a href="/consent">Consent</a>, <a href="/terms">Terms</a>.
+    </label>
+    <% if (errors.consent) { %><small class="error"><%= errors.consent %></small><% } %>
+
+    <p class="muted">Перенос и отмена регулируются условиями на странице Terms.</p>
+
+    <button class="btn" type="submit">Подтвердить запись</button>
+  </form>
+</section>
+<%- include('../partials/footer') %>

@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<section class="hero">
+  <h1>FAQ</h1>
+  <p>Короткие ответы на вопросы, которые чаще всего возникают перед первой записью.</p>
+</section>
+<section class="card">
+  <% faq.forEach((item) => { %>
+    <h2><%= item.q %></h2>
+    <p><%= item.a %></p>
+  <% }) %>
+</section>
+<p><a class="btn" href="/booking">Записаться</a></p>
+<%- include('../partials/footer') %>
