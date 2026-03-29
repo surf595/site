@@ -21,6 +21,16 @@
         <% }) %>
       </div>
     </section>
+<section class="hero">
+  <h1>FAQ</h1>
+  <p>Короткие ответы на вопросы, которые чаще всего возникают перед первой записью.</p>
+</section>
+<section class="card faq-list">
+  <% faq.forEach((item) => { %>
+    <details class="faq-item">
+      <summary><%= item.q %></summary>
+      <p><%= item.a %></p>
+    </details>
   <% }) %>
 
   <section class="faq-closing">

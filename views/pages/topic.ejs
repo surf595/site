@@ -36,5 +36,26 @@
       </div>
     </article>
   </div>
+<section class="hero">
+  <h1><%= topic.title %></h1>
+  <p><%= topic.excerpt %></p>
+  <p><a class="btn" href="/booking">Записаться</a> <a class="btn secondary" href="/about/approach">Подход</a></p>
+</section>
+
+<% if (topic.body && topic.body.length) { %>
+<section class="topic-body">
+  <% topic.body.forEach((block) => { %>
+    <article class="card">
+      <h2><%= block.heading %></h2>
+      <p><%= block.text %></p>
+    </article>
+  <% }) %>
+</section>
+<% } %>
+
+<section class="card">
+  <h2>Следующий шаг</h2>
+  <p>Если тема вам откликается — можно начать с первой встречи. Она ни к чему не обязывает: мы просто знакомимся и уточняем запрос.</p>
+  <p><a class="btn" href="/booking">Записаться на первую встречу</a></p>
 </section>
 <%- include('../partials/footer') %>

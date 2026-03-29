@@ -55,5 +55,16 @@
     <p class="cta-panel-copy">Даже если пока не хочется подробно рассказывать о себе, можно просто оставить заявку и коротко обозначить удобный способ связи.</p>
     <p><a class="btn" href="/booking">Перейти к записи</a> <a class="btn secondary" href="/services">Посмотреть все форматы</a></p>
   </section>
+<section class="hero">
+  <h1><%= service.title %></h1>
+  <p><%= service.details %></p>
+  <p class="service-meta"><strong><%= service.price %></strong> · <%= service.duration %></p>
+  <p><a class="btn" href="/booking">Записаться</a></p>
+</section>
+<section class="grid two">
+  <article class="card"><h2>Для кого</h2><p>Для взрослых, которым важно бережно разобрать текущее состояние и найти устойчивый рабочий ритм.</p></article>
+  <article class="card"><h2>Как проходит</h2><p>Первая встреча — ориентировка и контракт. Далее — регулярные сессии с понятными рамками.</p></article>
+  <article class="card"><h2>Оплата</h2><p>Оплата через Kairos Therapy OÜ. Подробные условия — на странице <a href="/terms">Условия</a>.</p></article>
+  <article class="card"><h2>Вопросы</h2><p>Ответы на частые вопросы: <a href="/faq">FAQ</a>.</p></article>
 </section>
 <%- include('../partials/footer') %>

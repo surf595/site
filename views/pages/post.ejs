@@ -1,12 +1,19 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<article class="card" style="margin-top:1.2rem">
-  <h1><%= post.title %></h1>
-  <p class="muted"><%= post.excerpt %></p>
-  <% post.body.forEach((p) => { %>
-    <p><%= p %></p>
-  <% }) %>
-  <hr />
-  <p><a href="/services/individual">Перейти к индивидуальной работе</a> · <a href="/booking">Записаться</a></p>
+<article class="post-article">
+  <header class="card">
+    <p class="post-label">Блог</p>
+    <h1><%= post.title %></h1>
+    <p class="muted"><%= post.excerpt %></p>
+  </header>
+  <div class="post-body">
+    <% post.body.forEach((p) => { %>
+      <p><%= p %></p>
+    <% }) %>
+  </div>
+  <footer class="card post-footer">
+    <p><strong>Столяров Виктор</strong> — психолог, экзистенциальный терапевт. Частная практика в Таллине с 2011 года.</p>
+    <p><a class="btn" href="/booking">Записаться на первую встречу</a> <a class="btn secondary" href="/about">О специалисте</a></p>
+  </footer>
 </article>
 <%- include('../partials/footer') %>

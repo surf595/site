@@ -61,5 +61,18 @@
     <p class="cta-panel-copy">Если вы пока только чувствуете, что стало тяжело, этого уже достаточно для первого шага. Формат можно определить вместе, исходя из вашего запроса и жизненной ситуации.</p>
     <p><a class="btn secondary" href="/contacts">Задать вопрос</a> <a class="btn" href="/booking">Перейти к записи</a></p>
   </section>
+<section class="hero">
+  <h1>Услуги</h1>
+  <p>Выберите формат, который лучше подходит вашему запросу. Работа проходит на русском языке — онлайн или очно в Таллине.</p>
+</section>
+<section class="grid two">
+  <% services.forEach((s) => { %>
+    <article class="card">
+      <h2><%= s.title %></h2>
+      <p><%= s.summary %></p>
+      <p class="service-meta"><strong><%= s.price %></strong> · <%= s.duration %></p>
+      <p><a class="btn" href="/services/<%= s.slug %>">Подробнее</a></p>
+    </article>
+  <% }) %>
 </section>
 <%- include('../partials/footer') %>
