@@ -2,7 +2,7 @@
 <%- include('../partials/header') %>
 <section class="hero">
   <h1>Контакты</h1>
-  <p>Если удобнее сначала задать организационный вопрос — напишите по любому из каналов ниже.</p>
+  <p>Напишите по любому из каналов ниже — или сразу перейдите к записи.</p>
 </section>
 <section class="grid two">
   <article class="card">
@@ -14,8 +14,26 @@
   <article class="card">
     <h2>Очный приём</h2>
     <p>Таллин, ул. Татари 56, кабинет 308</p>
-    <p class="muted">Очный формат — по предварительной записи.</p>
+    <p class="muted">По предварительной записи.</p>
   </article>
 </section>
+
+<section class="card map-card">
+  <h2>Как добраться</h2>
+  <div class="map-wrap">
+    <iframe
+      title="Kairos — психологическая практика на карте"
+      src="https://www.google.com/maps?q=Tatari+56,+Tallinn,+Estonia&output=embed"
+      width="100%"
+      height="320"
+      style="border:0;border-radius:.75rem;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+  <p class="muted" style="margin-top:.75rem;">Татари 56, 2-й этаж, кабинет 308. Вход со стороны главного входа в здание.</p>
+</section>
+
 <p><a class="btn" href="/booking">Записаться</a> <a class="btn secondary" href="/faq">FAQ</a></p>
 <%- include('../partials/footer') %>
