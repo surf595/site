@@ -196,7 +196,8 @@ app.get("/", (req, res) => {
     page: meta(
       "Kairos — психологическая практика в Таллине | Столяров Виктор",
       "Частная психологическая практика на русском языке. Индивидуальная работа онлайн и очно в Таллине. Запись: info@kairos.ee",
-      "/"
+      "/",
+      { ogImage: `${baseUrl}/office.jpg` }
     ),
     faq,
     schema: localBusinessSchema,
