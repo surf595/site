@@ -77,7 +77,68 @@ function sanitize(v) {
   return escapeHtml(String(v || "").trim().slice(0, 1000));
 }
 
-function meta(title, description, pathName) {
+const SITE_NAME = "Kairos — психологическая практика";
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": ["LocalBusiness", "MedicalBusiness"],
+  name: "Kairos Therapy OÜ",
+  alternateName: "Kairos — психологическая практика",
+  url: baseUrl,
+  telephone: "+3725398003",
+  email: "info@kairos.ee",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Tatari 56-308",
+    addressLocality: "Tallinn",
+    postalCode: "10134",
+    addressCountry: "EE",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 59.4336,
+    longitude: 24.7484,
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "20:00",
+  },
+  priceRange: "25–90 €",
+  currenciesAccepted: "EUR",
+  paymentAccepted: "Bank transfer",
+  inLanguage: "ru",
+  founder: {
+    "@type": "Person",
+    name: "Viktor Stoljarov",
+    jobTitle: "Psychologist, Existential Therapist",
+    sameAs: [],
+  },
+};
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Столяров Виктор",
+  alternateName: "Viktor Stoljarov",
+  jobTitle: "Психолог, экзистенциальный терапевт",
+  worksFor: { "@type": "Organization", name: "Kairos Therapy OÜ" },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Tallinn",
+    addressCountry: "EE",
+  },
+  telephone: "+3725398003",
+  email: "info@kairos.ee",
+  alumniOf: [
+    { "@type": "CollegeOrUniversity", name: "Московский городской психолого-педагогический университет (МГППУ)" },
+    { "@type": "EducationalOrganization", name: "Институт гуманистической и экзистенциальной психологии и психотерапии" },
+  ],
+  knowsAbout: ["Экзистенциальный анализ", "Дазайн-терапия", "Психологическое консультирование", "Групповая терапия"],
+};
+
+function meta(title, description, pathName, extras = {}) {
   return {
     title,
     description,
@@ -85,7 +146,9 @@ function meta(title, description, pathName) {
     ogTitle: title,
     ogDescription: description,
     ogUrl: `${baseUrl}${pathName}`,
+    ogType: "website",
     currentPath: pathName,
+    ...extras,
   };
 }
 
@@ -136,12 +199,14 @@ app.get("/", (req, res) => {
       "/"
     ),
     faq,
+    schema: localBusinessSchema,
   });
 });
 
 app.get("/about", (req, res) => {
   render(res, "pages/about", {
-    page: meta("О специалисте — Столяров Виктор", "Психолог, экзистенциальный терапевт. Частная практика в Таллине с 2011 года. МГППУ, дазайн-анализ, 14+ лет опыта.", "/about"),
+    page: meta("О специалисте — Столяров Виктор", "Психолог, экзистенциальный терапевт. Частная практика в Таллине с 2011 года. МГППУ, дазайн-анализ, 14+ лет опыта.", "/about", { ogImage: `${baseUrl}/viktor.jpg` }),
+    schema: personSchema,
   });
 });
 
@@ -180,9 +245,19 @@ app.get("/format", (req, res) => {
 });
 
 app.get("/faq", (req, res) => {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
   render(res, "pages/faq", {
     page: meta("FAQ", "Ответы на частые вопросы перед первой записью.", "/faq"),
     faq,
+    schema: faqSchema,
   });
 });
 
@@ -265,9 +340,20 @@ app.get("/blog", (req, res) => {
 app.get("/blog/:slug", (req, res, next) => {
   const post = posts.find((p) => p.slug === req.params.slug);
   if (!post) return next();
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    url: `${baseUrl}/blog/${post.slug}`,
+    inLanguage: "ru",
+    author: { "@type": "Person", name: "Столяров Виктор" },
+    publisher: { "@type": "Organization", name: "Kairos Therapy OÜ", url: baseUrl },
+  };
   render(res, "pages/post", {
-    page: meta(post.title, post.excerpt, `/blog/${post.slug}`),
+    page: meta(post.title, post.excerpt, `/blog/${post.slug}`, { ogType: "article" }),
     post,
+    schema: articleSchema,
   });
 });
 

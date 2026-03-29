@@ -6,11 +6,20 @@
   <title><%= page.title %></title>
   <meta name="description" content="<%= page.description %>" />
   <link rel="canonical" href="<%= page.canonical %>" />
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content="<%= page.ogType || 'website' %>" />
   <meta property="og:title" content="<%= page.ogTitle %>" />
   <meta property="og:description" content="<%= page.ogDescription %>" />
   <meta property="og:url" content="<%= page.ogUrl %>" />
   <meta property="og:locale" content="ru_RU" />
+  <meta property="og:site_name" content="Kairos — психологическая практика" />
+  <% if (page.ogImage) { %>
+  <meta property="og:image" content="<%= page.ogImage %>" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <% } %>
+  <% if (locals.schema) { %>
+  <script type="application/ld+json"><%- JSON.stringify(schema) %></script>
+  <% } %>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="stylesheet" href="/styles.css" />
 </head>

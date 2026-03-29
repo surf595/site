@@ -43,6 +43,24 @@ small.error { color: #9b1c1c; display: block; margin-top: .25rem; }
 .price-table td { padding: .6rem .5rem; border-bottom: 1px solid var(--line); }
 .price-table tr:last-child td { border-bottom: none; }
 .map-wrap { margin-top: .75rem; border-radius: .75rem; overflow: hidden; }
+.faq-list { padding: .5rem 1.2rem; }
+.faq-item { border-bottom: 1px solid var(--line); padding: .9rem 0; }
+.faq-item:last-child { border-bottom: none; }
+.faq-item summary { font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; font-size: 1.3rem; color: var(--accent); flex-shrink: 0; transition: transform .2s; }
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item p { margin: .6rem 0 .3rem; color: var(--muted); }
+.post-article { margin-top: 1.2rem; display: grid; gap: 1rem; }
+.post-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .4rem; }
+.post-body { background: var(--paper); border: 1px solid var(--line); border-radius: 1rem; padding: 1.4rem 1.2rem; line-height: 1.8; }
+.post-body p { margin: 0 0 1rem; }
+.post-body p:last-child { margin: 0; }
+.post-footer p { margin: 0 0 .75rem; }
+.post-footer p:last-child { margin: 0; }
+.specialist-photo { width: 100%; max-width: 320px; border-radius: 1rem; display: block; aspect-ratio: 3/4; object-fit: cover; object-position: top; }
+.about-photo-wrap { display: flex; justify-content: center; }
+.about-hero { display: flex; flex-direction: column; gap: 1.4rem; align-items: flex-start; }
 .footer-inner { display: grid; gap: 1rem; }
 .footer-company { font-size: .9rem; line-height: 1.7; }
 .footer-company p { margin: 0; }
@@ -54,4 +72,6 @@ small.error { color: #9b1c1c; display: block; margin-top: .25rem; }
   .two { grid-template-columns: 1fr 1fr; }
   .sticky-cta { display: none; }
   main { padding-bottom: 1rem; }
+  .about-hero { flex-direction: row; align-items: flex-start; gap: 2rem; }
+  .specialist-photo { max-width: 260px; }
 }

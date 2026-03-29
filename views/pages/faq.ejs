@@ -4,10 +4,12 @@
   <h1>FAQ</h1>
   <p>Короткие ответы на вопросы, которые чаще всего возникают перед первой записью.</p>
 </section>
-<section class="card">
+<section class="card faq-list">
   <% faq.forEach((item) => { %>
-    <h2><%= item.q %></h2>
-    <p><%= item.a %></p>
+    <details class="faq-item">
+      <summary><%= item.q %></summary>
+      <p><%= item.a %></p>
+    </details>
   <% }) %>
 </section>
 <p><a class="btn" href="/booking">Записаться</a></p>
