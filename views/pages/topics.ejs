@@ -1,0 +1,20 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<section class="hero">
+  <h1>Темы работы</h1>
+  <p>Основные направления, с которыми обращаются в практику. Каждая тема — отдельная страница с описанием подхода.</p>
+</section>
+<section class="grid two">
+  <% topics.forEach((t) => { %>
+    <article class="card">
+      <h2><a href="/topics/<%= t.slug %>"><%= t.title %></a></h2>
+      <p><%= t.excerpt %></p>
+      <p><a class="btn secondary" href="/topics/<%= t.slug %>">Читать</a></p>
+    </article>
+  <% }) %>
+</section>
+<section class="card" style="margin-top:0">
+  <p>Не нашли свою тему? На первой встрече можно обсудить любой запрос — без предварительной классификации.</p>
+  <p><a class="btn" href="/booking">Записаться</a></p>
+</section>
+<%- include('../partials/footer') %>

@@ -1,7 +1,9 @@
 </main>
+<% if (!hideCta) { %>
 <div class="sticky-cta">
   <a class="btn" href="/booking">Записаться</a>
 </div>
+<% } %>
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-company">
@@ -13,6 +15,8 @@
     <div class="footer-bottom">
       <p class="muted">© <%= new Date().getFullYear() %> Kairos Therapy OÜ — частная психологическая практика, Столяров Виктор. Сайт не предназначен для экстренной помощи.</p>
       <nav class="footer-links" aria-label="Юридическая навигация">
+        <a href="/topics">Темы</a>
+        <a href="/blog">Блог</a>
         <a href="/contacts">Контакты</a>
         <% legalNav.forEach((item) => { %>
           <a href="<%= item.href %>"><%= item.label %></a>

@@ -3,18 +3,94 @@ const path = require("path");
 const compression = require("compression");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const morgan = require("morgan");
+const session = require("express-session");
+const nodemailer = require("nodemailer");
 const { baseUrl, services, faq, posts, topics } = require("./content/site");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "info@kairos.ee";
 
+// ─── Email transport ──────────────────────────────────────────────────────────
+const mailer = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: Number(process.env.SMTP_PORT || 587),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER || "",
+    pass: process.env.SMTP_PASS || "",
+  },
+});
+
+async function sendBookingEmails(values) {
+  const ts = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Tallinn" });
+
+  // Notification to specialist
+  await mailer.sendMail({
+    from: `"Kairos сайт" <${process.env.SMTP_USER}>`,
+    to: ADMIN_EMAIL,
+    subject: `Новая заявка — ${values.format} — ${values.name}`,
+    text: [
+      `Новая заявка с сайта kairos.ee`,
+      ``,
+      `Имя:     ${values.name}`,
+      `Контакт: ${values.contact}`,
+      `Формат:  ${values.format}`,
+      `Комментарий: ${values.message || "—"}`,
+      ``,
+      `Время: ${ts}`,
+    ].join("\n"),
+    html: `
+      <h2 style="color:#3f5a54">Новая заявка — kairos.ee</h2>
+      <table cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:15px">
+        <tr><td><b>Имя</b></td><td>${values.name}</td></tr>
+        <tr><td><b>Контакт</b></td><td>${values.contact}</td></tr>
+        <tr><td><b>Формат</b></td><td>${values.format}</td></tr>
+        <tr><td><b>Комментарий</b></td><td>${values.message || "—"}</td></tr>
+        <tr><td><b>Время</b></td><td>${ts}</td></tr>
+      </table>
+    `,
+  });
+
+  // Auto-reply to client if contact looks like email
+  if (values.contact.includes("@")) {
+    await mailer.sendMail({
+      from: `"Kairos — психологическая практика" <${process.env.SMTP_USER}>`,
+      to: values.contact,
+      subject: "Ваша заявка получена — Kairos",
+      text: [
+        `Здравствуйте, ${values.name}!`,
+        ``,
+        `Ваша заявка на ${values.format} получена.`,
+        `Я свяжусь с вами в ближайшее время для подтверждения времени встречи.`,
+        ``,
+        `Если у вас есть вопросы — напишите на info@kairos.ee или в Telegram @Vitutas.`,
+        ``,
+        `Виктор Столяров`,
+        `Kairos Therapy OÜ | kairos.ee`,
+      ].join("\n"),
+    });
+  }
+}
+
+// ─── Middleware ───────────────────────────────────────────────────────────────
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.set("trust proxy", 1);
 
+app.use(morgan("combined"));
 app.use(compression());
 
-// Static files with cache headers
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "kairos-dev-secret-change-in-prod",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, sameSite: "lax", maxAge: 10 * 60 * 1000 },
+  })
+);
+
 app.use(
   express.static(path.join(__dirname, "public"), {
     maxAge: "7d",
@@ -29,7 +105,8 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        styleSrc: ["'self'"],
+        styleSrc: ["'self'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
         scriptSrc: ["'self'"],
         imgSrc: ["'self'", "data:", "https://maps.gstatic.com", "https://*.googleapis.com"],
         frameSrc: ["https://www.google.com"],
@@ -48,12 +125,14 @@ const bookingLimiter = rateLimit({
   message: "Слишком много попыток отправки. Попробуйте чуть позже.",
 });
 
+// ─── Navigation ───────────────────────────────────────────────────────────────
 const nav = [
   { href: "/", label: "Главная" },
   { href: "/about", label: "О специалисте" },
   { href: "/services", label: "Услуги" },
   { href: "/format", label: "Формат" },
   { href: "/faq", label: "FAQ" },
+  { href: "/blog", label: "Блог" },
   { href: "/contacts", label: "Контакты" },
   { href: "/booking", label: "Запись" },
 ];
@@ -64,6 +143,7 @@ const legalNav = [
   { href: "/terms", label: "Условия" },
 ];
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 function escapeHtml(v) {
   return String(v || "")
     .replaceAll("&", "&amp;")
@@ -77,13 +157,18 @@ function sanitize(v) {
   return escapeHtml(String(v || "").trim().slice(0, 1000));
 }
 
+// Pages where sticky CTA should be hidden
+const HIDE_CTA_PATHS = new Set([
+  "/booking", "/booking/confirmed", "/privacy", "/consent", "/terms",
+]);
+
 const SITE_NAME = "Kairos — психологическая практика";
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": ["LocalBusiness", "MedicalBusiness"],
   name: "Kairos Therapy OÜ",
-  alternateName: "Kairos — психологическая практика",
+  alternateName: SITE_NAME,
   url: baseUrl,
   telephone: "+3725398003",
   email: "info@kairos.ee",
@@ -94,11 +179,7 @@ const localBusinessSchema = {
     postalCode: "10134",
     addressCountry: "EE",
   },
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: 59.4336,
-    longitude: 24.7484,
-  },
+  geo: { "@type": "GeoCoordinates", latitude: 59.4336, longitude: 24.7484 },
   openingHoursSpecification: {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -113,7 +194,6 @@ const localBusinessSchema = {
     "@type": "Person",
     name: "Viktor Stoljarov",
     jobTitle: "Psychologist, Existential Therapist",
-    sameAs: [],
   },
 };
 
@@ -124,11 +204,7 @@ const personSchema = {
   alternateName: "Viktor Stoljarov",
   jobTitle: "Психолог, экзистенциальный терапевт",
   worksFor: { "@type": "Organization", name: "Kairos Therapy OÜ" },
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Tallinn",
-    addressCountry: "EE",
-  },
+  address: { "@type": "PostalAddress", addressLocality: "Tallinn", addressCountry: "EE" },
   telephone: "+3725398003",
   email: "info@kairos.ee",
   alumniOf: [
@@ -153,14 +229,17 @@ function meta(title, description, pathName, extras = {}) {
 }
 
 function render(res, view, options = {}) {
+  const pathName = options.page?.currentPath || "";
   res.render(view, {
     nav,
     legalNav,
     baseUrl,
+    hideCta: HIDE_CTA_PATHS.has(pathName),
     ...options,
   });
 }
 
+// ─── Routes ───────────────────────────────────────────────────────────────────
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain").send(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml\n`);
 });
@@ -168,20 +247,11 @@ app.get("/robots.txt", (req, res) => {
 app.get("/sitemap.xml", (req, res) => {
   const now = new Date().toISOString().split("T")[0];
   const urls = [
-    "/",
-    "/about",
-    "/about/approach",
-    "/about/boundaries",
-    "/services",
-    "/services/individual",
-    "/format",
-    "/faq",
-    "/contacts",
-    "/booking",
-    "/privacy",
-    "/consent",
-    "/terms",
-    "/blog",
+    "/", "/about", "/about/approach", "/about/boundaries",
+    "/services", "/services/individual", "/services/group", "/services/family",
+    "/format", "/faq", "/contacts", "/booking",
+    "/blog", "/topics",
+    "/privacy", "/consent", "/terms",
     ...posts.map((x) => `/blog/${x.slug}`),
     ...topics.map((x) => `/topics/${x.slug}`),
   ];
@@ -197,7 +267,7 @@ app.get("/", (req, res) => {
       "Kairos — психологическая практика в Таллине | Столяров Виктор",
       "Частная психологическая практика на русском языке. Индивидуальная работа онлайн и очно в Таллине. Запись: info@kairos.ee",
       "/",
-      { ogImage: `${baseUrl}/office.jpg` }
+      { ogImage: `${baseUrl}/office.webp` }
     ),
     faq,
     schema: localBusinessSchema,
@@ -206,7 +276,12 @@ app.get("/", (req, res) => {
 
 app.get("/about", (req, res) => {
   render(res, "pages/about", {
-    page: meta("О специалисте — Столяров Виктор", "Психолог, экзистенциальный терапевт. Частная практика в Таллине с 2011 года. МГППУ, дазайн-анализ, 14+ лет опыта.", "/about", { ogImage: `${baseUrl}/viktor.webp` }),
+    page: meta(
+      "О специалисте — Столяров Виктор",
+      "Психолог, экзистенциальный терапевт. Частная практика в Таллине с 2011 года. МГППУ, дазайн-анализ, 14+ лет опыта.",
+      "/about",
+      { ogImage: `${baseUrl}/viktor.webp` }
+    ),
     schema: personSchema,
   });
 });
@@ -225,7 +300,7 @@ app.get("/about/boundaries", (req, res) => {
 
 app.get("/services", (req, res) => {
   render(res, "pages/services", {
-    page: meta("Услуги", "Форматы психологической работы и выбор подходящего направления.", "/services"),
+    page: meta("Услуги — цены и форматы", "Индивидуальная терапия 60 €, групповая 25 €, семейный приём 90 €. Онлайн и очно в Таллине.", "/services"),
     services,
   });
 });
@@ -256,7 +331,7 @@ app.get("/faq", (req, res) => {
     })),
   };
   render(res, "pages/faq", {
-    page: meta("FAQ", "Ответы на частые вопросы перед первой записью.", "/faq"),
+    page: meta("FAQ — частые вопросы", "Ответы на частые вопросы перед первой записью к психологу в Таллине.", "/faq"),
     faq,
     schema: faqSchema,
   });
@@ -270,13 +345,13 @@ app.get("/contacts", (req, res) => {
 
 app.get("/booking", (req, res) => {
   render(res, "pages/booking", {
-    page: meta("Запись", "Запись на первую встречу с минимальным количеством полей.", "/booking"),
+    page: meta("Запись на приём", "Запись на первую встречу к психологу в Таллине. Онлайн или очно.", "/booking"),
     errors: {},
     values: {},
   });
 });
 
-app.post("/booking", bookingLimiter, (req, res) => {
+app.post("/booking", bookingLimiter, async (req, res, next) => {
   const values = {
     name: sanitize(req.body.name),
     contact: sanitize(req.body.contact),
@@ -287,9 +362,7 @@ app.post("/booking", bookingLimiter, (req, res) => {
   };
 
   const errors = {};
-  if (values.website) {
-    errors.form = "Некорректная отправка формы.";
-  }
+  if (values.website) errors.form = "Некорректная отправка формы.";
   if (!values.name) errors.name = "Укажите имя или псевдоним.";
   if (!values.contact) errors.contact = "Укажите email или телефон/мессенджер.";
   if (!values.format) errors.format = "Выберите предпочтительный формат.";
@@ -297,43 +370,59 @@ app.post("/booking", bookingLimiter, (req, res) => {
 
   if (Object.keys(errors).length > 0) {
     return render(res.status(400), "pages/booking", {
-      page: meta("Запись", "Запись на первую встречу с минимальным количеством полей.", "/booking"),
+      page: meta("Запись на приём", "Запись на первую встречу.", "/booking"),
       errors,
       values,
     });
   }
 
-  return res.redirect(`/booking/confirmed?format=${encodeURIComponent(values.format)}`);
+  // Send email (non-blocking — don't fail booking if email fails)
+  try {
+    await sendBookingEmails(values);
+  } catch (err) {
+    console.error("[booking] email error:", err.message);
+  }
+
+  // Protect /booking/confirmed — only accessible after this POST
+  req.session.bookingDone = true;
+  req.session.bookingFormat = values.format;
+
+  return res.redirect("/booking/confirmed");
 });
 
 app.get("/booking/confirmed", (req, res) => {
+  if (!req.session.bookingDone) {
+    return res.redirect("/booking");
+  }
+  const selectedFormat = sanitize(req.session.bookingFormat || "онлайн");
+  req.session.bookingDone = false; // consume once
   render(res, "pages/confirmed", {
-    page: meta("Подтверждение записи", "Запись отправлена. Что дальше и как подготовиться.", "/booking/confirmed"),
-    selectedFormat: sanitize(req.query.format || "онлайн"),
+    page: meta("Заявка отправлена", "Ваша заявка получена. Мы свяжемся с вами для подтверждения.", "/booking/confirmed"),
+    selectedFormat,
   });
 });
 
 app.get("/privacy", (req, res) => {
   render(res, "pages/privacy", {
-    page: meta("Политика конфиденциальности", "Обработка и хранение персональных данных.", "/privacy"),
+    page: meta("Политика конфиденциальности", "Обработка персональных данных в соответствии с GDPR (ЕС 2016/679).", "/privacy"),
   });
 });
 
 app.get("/consent", (req, res) => {
   render(res, "pages/consent", {
-    page: meta("Согласие на обработку данных", "Согласие на обработку данных в рамках первичного обращения.", "/consent"),
+    page: meta("Согласие на обработку данных", "Согласие субъекта данных согласно GDPR и Закону о защите данных Эстонии.", "/consent"),
   });
 });
 
 app.get("/terms", (req, res) => {
   render(res, "pages/terms", {
-    page: meta("Условия оплаты и отмены", "Организационные условия: оплата, перенос и отмена встреч.", "/terms"),
+    page: meta("Условия оплаты и отмены", "Организационные условия: оплата, перенос и отмена встреч. Kairos Therapy OÜ.", "/terms"),
   });
 });
 
 app.get("/blog", (req, res) => {
   render(res, "pages/blog", {
-    page: meta("Блог", "Материалы о психологической работе и первом обращении.", "/blog"),
+    page: meta("Блог — психология и терапия", "Статьи о первой встрече с психологом, экзистенциальном анализе и формате работы.", "/blog"),
     posts,
   });
 });
@@ -354,7 +443,15 @@ app.get("/blog/:slug", (req, res, next) => {
   render(res, "pages/post", {
     page: meta(post.title, post.excerpt, `/blog/${post.slug}`, { ogType: "article" }),
     post,
+    posts, // for related posts
     schema: articleSchema,
+  });
+});
+
+app.get("/topics", (req, res) => {
+  render(res, "pages/topics", {
+    page: meta("Темы работы", "Тревога, сложности в отношениях, экзистенциальные кризисы — основные темы психологической практики.", "/topics"),
+    topics,
   });
 });
 
@@ -364,12 +461,26 @@ app.get("/topics/:slug", (req, res, next) => {
   render(res, "pages/topic", {
     page: meta(topic.title, topic.excerpt, `/topics/${topic.slug}`),
     topic,
+    topics, // for related topics
   });
 });
 
+// ─── Error handlers ───────────────────────────────────────────────────────────
 app.use((req, res) => {
   render(res.status(404), "pages/not-found", {
     page: meta("Страница не найдена", "Запрошенная страница не найдена.", req.path),
+  });
+});
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error("[error]", err.stack || err.message);
+  res.status(500).render("pages/500", {
+    nav,
+    legalNav,
+    baseUrl,
+    hideCta: true,
+    page: meta("Ошибка сервера", "Что-то пошло не так. Попробуйте позже.", req.path),
   });
 });
 

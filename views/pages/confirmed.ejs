@@ -1,17 +1,35 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1>Запись отправлена</h1>
-  <p>Спасибо. Заявка принята. Предпочтительный формат: <strong><%= selectedFormat %></strong>.</p>
-  <p>Мы свяжемся с вами и подтвердим время встречи.</p>
+<section class="hero confirmed-hero">
+  <div class="confirmed-icon">✓</div>
+  <h1>Заявка отправлена</h1>
+  <p>Спасибо. Ваша заявка на <strong><%= selectedFormat %></strong> получена.</p>
+  <p class="muted">Я свяжусь с вами в ближайшее время для подтверждения времени встречи.</p>
+</section>
+<section class="grid two">
+  <article class="card">
+    <h2>Что дальше</h2>
+    <ul>
+      <li>Проверьте почту или мессенджер — придёт подтверждение.</li>
+      <li>Если вы указали email — автоответ уже отправлен.</li>
+      <li>Обычно я отвечаю в течение одного рабочего дня.</li>
+    </ul>
+  </article>
+  <article class="card">
+    <h2>Если нет ответа</h2>
+    <ul>
+      <li>Напишите напрямую: <a href="mailto:info@kairos.ee">info@kairos.ee</a></li>
+      <li>Telegram: <a href="https://t.me/Vitutas" rel="nofollow noopener">@Vitutas</a></li>
+      <li>Тел.: <a href="tel:+3725398003">+372 539 8003</a></li>
+    </ul>
+  </article>
 </section>
 <section class="card">
-  <h2>Что дальше</h2>
-  <ul>
-    <li>Проверьте почту/мессенджер для подтверждения времени.</li>
-    <li>При необходимости переноса используйте <a href="/terms">правила переноса и отмены</a>.</li>
-    <li>Если есть организационный вопрос — <a href="/contacts">свяжитесь</a>.</li>
-  </ul>
-  <p><a class="btn" href="/booking">Новая запись</a></p>
+  <h2>Пока ждёте — полезные материалы</h2>
+  <p>
+    <a href="/blog/pervaya-vstrecha-u-psihologa">Чего ожидать от первой встречи →</a><br />
+    <a href="/about/approach">Как устроен подход →</a><br />
+    <a href="/faq">Частые вопросы →</a>
+  </p>
 </section>
 <%- include('../partials/footer') %>
