@@ -2,14 +2,15 @@
 <%- include('../partials/header') %>
 <section class="hero">
   <h1>Услуги</h1>
-  <p>Выберите формат, который лучше подходит вашему запросу.</p>
+  <p>Выберите формат, который лучше подходит вашему запросу. Работа проходит на русском языке — онлайн или очно в Таллине.</p>
 </section>
 <section class="grid two">
   <% services.forEach((s) => { %>
     <article class="card">
       <h2><%= s.title %></h2>
       <p><%= s.summary %></p>
-      <p><a class="btn" href="/services/<%= s.slug %>">Выбрать формат</a></p>
+      <p class="service-meta"><strong><%= s.price %></strong> · <%= s.duration %></p>
+      <p><a class="btn" href="/services/<%= s.slug %>">Подробнее</a></p>
     </article>
   <% }) %>
 </section>

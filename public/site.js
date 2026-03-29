@@ -6,3 +6,14 @@ if (toggle && nav) {
     toggle.setAttribute('aria-expanded', String(opened));
   });
 }
+
+const bookingForm = document.querySelector('form[action="/booking"]');
+if (bookingForm) {
+  bookingForm.addEventListener('submit', () => {
+    const btn = bookingForm.querySelector('button[type="submit"]');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Отправляем…';
+    }
+  });
+}

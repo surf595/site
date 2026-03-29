@@ -1,26 +1,33 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
 
-<section class="hero">
-  <h1>Спокойная и структурная психологическая работа для взрослых</h1>
-  <p class="muted">Если вы хотите разобраться с тревогой, напряжением в отношениях или повторяющимися сценариями — здесь можно начать без перегруза.</p>
-  <p><a class="btn" href="/booking">Записаться</a> <a class="btn secondary" href="/about">О специалисте</a></p>
+<section class="hero hero-split">
+  <div class="hero-text">
+    <h1>Спокойная и структурная психологическая работа для взрослых</h1>
+    <p class="muted">Если вы хотите разобраться с тревогой, напряжением в отношениях или повторяющимися сценариями — здесь можно начать без перегруза.</p>
+    <p><a class="btn" href="/booking">Записаться</a> <a class="btn secondary" href="/about">О специалисте</a></p>
+  </div>
+  <div class="hero-photo-wrap">
+    <img src="/office.jpg" alt="Кабинет психолога — Kairos, Таллин" class="hero-photo" width="480" height="854" />
+  </div>
 </section>
 
 <section class="grid two">
   <article class="card"><h2>С чем можно обратиться</h2><p>Тревога, эмоциональное напряжение, сложности в отношениях, кризисы и вопросы границ.</p></article>
   <article class="card"><h2>Как проходит работа</h2><p>Первая встреча для ориентировки и формулировки запроса, далее — регулярный ритм с ясными рамками.</p></article>
-  <article class="card"><h2>Формат</h2><p>Основной формат — онлайн. Очный формат доступен по согласованию.</p><p><a href="/format">Подробнее о формате</a></p></article>
+  <article class="card"><h2>Формат</h2><p>Основной формат — онлайн. Очный приём в Таллине, Татари 56.</p><p><a href="/format">Подробнее о формате</a></p></article>
   <article class="card"><h2>Границы и безопасность</h2><p>Конфиденциальность, организационные правила и исключения описаны заранее.</p><p><a href="/about/boundaries">Читать</a></p></article>
 </section>
 
 <section class="card">
   <h2>Короткий FAQ</h2>
   <% faq.slice(0,3).forEach((item) => { %>
-    <h3><%= item.q %></h3>
-    <p><%= item.a %></p>
+    <details class="faq-item">
+      <summary><%= item.q %></summary>
+      <p><%= item.a %></p>
+    </details>
   <% }) %>
-  <p><a href="/faq">Все вопросы</a></p>
+  <p style="margin-top:.75rem"><a href="/faq">Все вопросы →</a></p>
 </section>
 
 <%- include('../partials/footer') %>

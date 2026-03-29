@@ -18,8 +18,10 @@
     <label for="format">Предпочтительный формат</label>
     <select id="format" name="format" required>
       <option value="">Выберите</option>
-      <option value="онлайн" <%= values.format === 'онлайн' ? 'selected' : '' %>>Онлайн</option>
-      <option value="очно" <%= values.format === 'очно' ? 'selected' : '' %>>Очно (по согласованию)</option>
+      <option value="индивидуально онлайн" <%= values.format === 'индивидуально онлайн' ? 'selected' : '' %>>Индивидуально — онлайн (60 €)</option>
+      <option value="индивидуально очно" <%= values.format === 'индивидуально очно' ? 'selected' : '' %>>Индивидуально — очно, Таллин (60 €)</option>
+      <option value="семейный приём" <%= values.format === 'семейный приём' ? 'selected' : '' %>>Семейный приём (90 €)</option>
+      <option value="групповая встреча" <%= values.format === 'групповая встреча' ? 'selected' : '' %>>Групповая встреча (25 €)</option>
     </select>
     <% if (errors.format) { %><small class="error"><%= errors.format %></small><% } %>
 
