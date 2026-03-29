@@ -1,5 +1,26 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
+<section class="legal faq-page">
+  <div class="faq-hero">
+    <p class="privacy-eyebrow">FAQ</p>
+    <h1>FAQ</h1>
+    <p class="faq-lead">Ответы на частые вопросы о начале терапии, формате работы, конфиденциальности и группах.</p>
+  </div>
+
+  <% faqSections.forEach((section, sectionIndex) => { %>
+    <section class="faq-section">
+      <h2><%= section.title %></h2>
+      <div class="faq-accordion">
+        <% section.items.forEach((item, itemIndex) => { %>
+          <details class="faq-item" <%= sectionIndex === 0 && itemIndex === 0 ? 'open' : '' %>>
+            <summary><span><%= item.q %></span></summary>
+            <div class="faq-answer">
+              <p><%= item.a %></p>
+            </div>
+          </details>
+        <% }) %>
+      </div>
+    </section>
 <section class="hero">
   <h1>FAQ</h1>
   <p>Короткие ответы на вопросы, которые чаще всего возникают перед первой записью.</p>
@@ -11,6 +32,11 @@
       <p><%= item.a %></p>
     </details>
   <% }) %>
+
+  <section class="faq-closing">
+    <h2>Не нашли ответ на свой вопрос?</h2>
+    <p>Вы можете связаться со мной через страницу контактов и задать свой вопрос напрямую.</p>
+    <p><a class="btn secondary" href="/contacts">Контакты</a> <a class="btn" href="/booking">Записаться</a></p>
+  </section>
 </section>
-<p><a class="btn" href="/booking">Записаться</a></p>
 <%- include('../partials/footer') %>

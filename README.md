@@ -21,6 +21,7 @@ npm run dev
 ```
 
 - Форма записи с валидацией, honeypot-полем и rate-limit.
+- Формы записи и контактов отправляют письмо на `info@kairos.ee` через системный `sendmail`.
 - SEO-база: мета-теги, canonical, OG, `robots.txt`, `sitemap.xml`.
 
 ## Локальный запуск
@@ -39,6 +40,7 @@ node --check server.js
 ## Переменные окружения
 - `PORT` — порт сервера (по умолчанию `3000`)
 - `SITE_URL` — базовый URL для canonical/OG/sitemap (по умолчанию `http://localhost:3000`)
+- `SENDMAIL_PATH` — путь к бинарнику `sendmail` (по умолчанию `/usr/sbin/sendmail`)
 
 ## Деплой
 Подходит любой Node.js хостинг (Render, Fly.io, Railway, VPS):
@@ -56,7 +58,7 @@ node --check server.js
 ## Важные TODO перед production
 - Заменить placeholder-контакты в `/contacts`.
 - Провести финальный юридический просмотр страниц `/privacy`, `/consent`, `/terms`.
-- Подключить реальную интеграцию отправки заявок (email/CRM endpoint).
+- Проверить доставку писем на production-сервере и корректную настройку `sendmail`.
 
 ## Проектная документация
 - `TECH_SPEC_SITE_STRUCTURE.md`

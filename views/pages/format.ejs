@@ -1,14 +1,59 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1>Формат работы</h1>
-  <p>Основной формат — онлайн-встречи на русском языке. Очные встречи возможны по предварительному согласованию.</p>
+<section class="page-shell">
+  <div class="page-hero">
+    <div class="page-hero-grid">
+      <div class="page-hero-copy">
+        <p class="about-kicker">Организация работы</p>
+        <h1>Формат работы</h1>
+        <p class="page-summary">Основной формат — онлайн-встречи на русском языке. Очные встречи возможны по предварительному согласованию.</p>
+        <p>Заранее понятный формат помогает снизить лишнюю неопределённость: сколько длится сессия, как обычно строится ритм и где посмотреть организационные условия.</p>
+        <p><a class="btn" href="/booking">Перейти к записи</a> <a class="btn secondary" href="/terms">Посмотреть условия</a></p>
+      </div>
+      <div class="page-stat-grid">
+        <article class="page-stat">
+          <span>Длительность</span>
+          <strong>50 минут</strong>
+          <p>одна стандартная встреча</p>
+        </article>
+        <article class="page-stat">
+          <span>Ритм</span>
+          <strong>Обычно раз в неделю</strong>
+          <p>обсуждается индивидуально</p>
+        </article>
+        <article class="page-stat">
+          <span>Формат</span>
+          <strong>Онлайн и очно</strong>
+          <p>очный формат доступен по согласованию</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <section class="page-section page-section-soft">
+    <div class="page-section-head">
+      <p class="about-kicker">Ключевые параметры</p>
+      <h2>Основные рамки работы можно увидеть сразу</h2>
+    </div>
+
+    <div class="feature-grid feature-grid-2">
+      <article class="feature-card">
+        <h2>Длительность</h2>
+        <p>Одна встреча обычно длится 50 минут. Этого времени достаточно, чтобы удерживать фокус и не перегружать процесс.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Ритм</h2>
+        <p>Чаще всего встречи проходят раз в неделю, но ритм обсуждается индивидуально и зависит от вашего запроса.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Организационные условия</h2>
+        <p>Оплата, перенос и отмена встреч собраны на странице <a href="/terms">Условия</a>, чтобы всё было ясно до начала работы.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Конфиденциальность</h2>
+        <p>Правила обработки данных и информированного согласия описаны на страницах <a href="/privacy">Конфиденциальность</a> и <a href="/consent">Согласие</a>.</p>
+      </article>
+    </div>
+  </section>
 </section>
-<section class="grid two">
-  <article class="card"><h2>Длительность</h2><p>Одна встреча обычно длится 50 минут.</p></article>
-  <article class="card"><h2>Ритм</h2><p>Чаще всего — 1 раз в неделю, ритм обсуждается индивидуально.</p></article>
-  <article class="card"><h2>Оргусловия</h2><p>Оплата, перенос и отмена встреч описаны в <a href="/terms">Terms</a>.</p></article>
-  <article class="card"><h2>Конфиденциальность</h2><p>Правила обработки данных — в <a href="/privacy">Privacy</a> и <a href="/consent">Consent</a>.</p></article>
-</section>
-<p><a class="btn" href="/booking">Перейти к записи</a></p>
 <%- include('../partials/footer') %>

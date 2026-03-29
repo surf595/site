@@ -1,5 +1,66 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
+<section class="page-shell">
+  <div class="page-hero">
+    <div class="page-hero-grid">
+      <div class="page-hero-copy">
+        <p class="about-kicker">Форматы работы</p>
+        <h1>Услуги</h1>
+        <p class="page-summary">Выберите формат, который лучше подходит вашему запросу: индивидуальный, групповой или семейный.</p>
+        <p>Если пока трудно понять, какой вариант подходит больше, это можно обсудить до первой встречи или прямо на ней.</p>
+        <p><a class="btn" href="/booking">Записаться</a> <a class="btn secondary" href="/contacts">Уточнить формат</a></p>
+      </div>
+      <div class="page-stat-grid">
+        <article class="page-stat">
+          <span>Индивидуальная работа</span>
+          <strong>60 €</strong>
+          <p>50 минут, очно или онлайн</p>
+        </article>
+        <article class="page-stat">
+          <span>Групповая работа</span>
+          <strong>20 €</strong>
+          <p>безопасный формат взаимодействия</p>
+        </article>
+        <article class="page-stat">
+          <span>Семейная работа</span>
+          <strong>90 €</strong>
+          <p>когда запрос касается всей системы отношений</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <section class="page-section">
+    <div class="page-section-head">
+      <p class="about-kicker">Выбор формата</p>
+      <h2>Каждая страница помогает быстро понять, подходит ли вам этот тип работы</h2>
+      <p class="muted">Ниже — три формата с коротким ориентиром: для кого они, как обычно проходят и что в них особенно важно.</p>
+    </div>
+
+    <div class="feature-grid service-grid">
+      <% services.forEach((s, index) => { %>
+        <article class="feature-card service-link-card">
+          <p class="feature-index">0<%= index + 1 %></p>
+          <h2><%= s.title %></h2>
+          <p class="service-card-summary"><%= s.summary %></p>
+          <div class="stack-list">
+            <p><strong>Для кого:</strong> <%= s.audience %></p>
+            <p><strong>Как проходит:</strong> <%= s.process %></p>
+          </div>
+          <p><a class="btn" href="/services/<%= s.slug %>">Открыть формат</a></p>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="cta-panel">
+    <div class="page-section-head">
+      <p class="about-kicker">Нужна опора перед выбором</p>
+      <h2>Необязательно сразу точно знать, какой формат вам нужен</h2>
+    </div>
+    <p class="cta-panel-copy">Если вы пока только чувствуете, что стало тяжело, этого уже достаточно для первого шага. Формат можно определить вместе, исходя из вашего запроса и жизненной ситуации.</p>
+    <p><a class="btn secondary" href="/contacts">Задать вопрос</a> <a class="btn" href="/booking">Перейти к записи</a></p>
+  </section>
 <section class="hero">
   <h1>Услуги</h1>
   <p>Выберите формат, который лучше подходит вашему запросу. Работа проходит на русском языке — онлайн или очно в Таллине.</p>
