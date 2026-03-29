@@ -16,4 +16,31 @@
     <p><a class="btn" href="/booking">Записаться на первую встречу</a> <a class="btn secondary" href="/about">О специалисте</a></p>
   </footer>
 </article>
+
+<% const related = posts.filter((p) => p.slug !== post.slug).slice(0, 2); %>
+<% if (related.length) { %>
+<section>
+  <h2 class="post-label">Ещё по теме</h2>
+  <div class="grid two">
+    <% related.forEach((p) => { %>
+      <article class="card">
+        <h3><a href="/blog/<%= p.slug %>"><%= p.title %></a></h3>
+        <p class="muted"><%= p.excerpt %></p>
+      </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (topics && topics.length) { %>
+<section class="card">
+  <p class="post-label">Темы работы</p>
+  <p>Если статья касается вашей ситуации — посмотрите, как эта тема прорабатывается в практике:</p>
+  <ul class="footer-links">
+    <% topics.forEach((t) => { %>
+      <li><a href="/topics/<%= t.slug %>"><%= t.title %></a></li>
+    <% }) %>
+  </ul>
+</section>
+<% } %>
 <%- include('../partials/footer') %>

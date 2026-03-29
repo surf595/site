@@ -443,7 +443,8 @@ app.get("/blog/:slug", (req, res, next) => {
   render(res, "pages/post", {
     page: meta(post.title, post.excerpt, `/blog/${post.slug}`, { ogType: "article" }),
     post,
-    posts, // for related posts
+    posts,
+    topics,
     schema: articleSchema,
   });
 });
@@ -461,7 +462,8 @@ app.get("/topics/:slug", (req, res, next) => {
   render(res, "pages/topic", {
     page: meta(topic.title, topic.excerpt, `/topics/${topic.slug}`),
     topic,
-    topics, // for related topics
+    topics,
+    posts,
   });
 });
 

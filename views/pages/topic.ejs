@@ -17,6 +17,20 @@
 </section>
 <% } %>
 
+<% if (posts && posts.length) { %>
+<section>
+  <h2 class="post-label">Статьи по теме</h2>
+  <div class="grid two">
+    <% posts.slice(0, 2).forEach((p) => { %>
+      <article class="card">
+        <h3><a href="/blog/<%= p.slug %>"><%= p.title %></a></h3>
+        <p class="muted"><%= p.excerpt %></p>
+      </article>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
 <section class="card">
   <h2>Следующий шаг</h2>
   <p>Если тема вам откликается — можно начать с первой встречи. Она ни к чему не обязывает: мы просто знакомимся и уточняем запрос.</p>

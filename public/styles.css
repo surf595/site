@@ -147,6 +147,7 @@ input:focus, select:focus, textarea:focus {
 }
 select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233f5a54' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .75rem center; padding-right: 2.5rem; }
 small.error { color: var(--error); display: block; margin-top: .3rem; font-size: .875rem; }
+.honeypot { position: absolute; left: -9999px; }
 .banner {
   border-left: 4px solid var(--banner-border);
   background: var(--banner-bg);
@@ -189,7 +190,7 @@ small.error { color: var(--error); display: block; margin-top: .3rem; font-size:
 
 /* ── Blog / Posts ── */
 .post-article { margin-top: 1.2rem; display: grid; gap: 1rem; }
-.post-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .4rem; }
+.post-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 .5rem; }
 .post-body { background: var(--paper); border: 1px solid var(--line); border-radius: 1rem; padding: 1.4rem 1.2rem; line-height: 1.8; }
 .post-body p { margin: 0 0 1rem; }
 .post-body p:last-child { margin: 0; }
