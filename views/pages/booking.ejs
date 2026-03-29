@@ -1,42 +1,106 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1>Запись на первую встречу</h1>
-  <p>Минимум полей, ясные условия и прозрачная обработка данных.</p>
-</section>
-<section class="form-wrap">
-  <% if (errors.form) { %><p class="banner"><%= errors.form %></p><% } %>
-  <form method="post" action="/booking" novalidate>
-    <label for="name">Имя или псевдоним</label>
-    <input id="name" name="name" value="<%= values.name || '' %>" autocomplete="name" required />
-    <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
+<section class="page-shell booking-page">
+  <div class="page-hero">
+    <div class="page-hero-grid">
+      <div class="page-hero-copy">
+        <p class="about-kicker">Первая встреча</p>
+        <h1>Запись на первую встречу</h1>
+        <p class="page-summary">Минимум полей, ясные условия и прозрачная обработка данных. После отправки заявка автоматически поступает на <a href="mailto:info@kairos.ee">info@kairos.ee</a>.</p>
+        <p>Если пока трудно подробно описывать ситуацию, это нормально. Для первой заявки достаточно имени, способа связи и удобного формата встречи.</p>
+      </div>
+      <div class="page-stat-grid">
+        <article class="page-stat">
+          <span>Формат</span>
+          <strong>Онлайн или очно</strong>
+          <p>очный формат доступен по согласованию</p>
+        </article>
+        <article class="page-stat">
+          <span>Способ ответа</span>
+          <strong>Email или телефон</strong>
+          <p>укажите тот канал, который вам удобнее</p>
+        </article>
+        <article class="page-stat">
+          <span>Прозрачность</span>
+          <strong>До отправки формы</strong>
+          <p>условия, согласие и конфиденциальность доступны заранее</p>
+        </article>
+      </div>
+    </div>
+  </div>
 
-    <label for="contact">Email или телефон/мессенджер</label>
-    <input id="contact" name="contact" value="<%= values.contact || '' %>" autocomplete="email" required />
-    <% if (errors.contact) { %><small class="error"><%= errors.contact %></small><% } %>
+  <div class="booking-layout">
+    <section class="page-section page-section-soft booking-intro">
+      <div class="page-section-head">
+        <p class="about-kicker">Как проходит запись</p>
+        <h2>Небольшой ориентир перед отправкой формы</h2>
+      </div>
 
-    <label for="format">Предпочтительный формат</label>
-    <select id="format" name="format" required>
-      <option value="">Выберите</option>
-      <option value="онлайн" <%= values.format === 'онлайн' ? 'selected' : '' %>>Онлайн</option>
-      <option value="очно" <%= values.format === 'очно' ? 'selected' : '' %>>Очно (по согласованию)</option>
-    </select>
-    <% if (errors.format) { %><small class="error"><%= errors.format %></small><% } %>
+      <div class="process-grid booking-steps">
+        <article class="process-step">
+          <span>01</span>
+          <h3>Оставьте только базовые данные</h3>
+          <p>Имя или псевдоним, удобный контакт и предпочтительный формат встречи уже достаточны для первого шага.</p>
+        </article>
+        <article class="process-step">
+          <span>02</span>
+          <h3>Добавьте комментарий, если это полезно</h3>
+          <p>Можно коротко обозначить тему, текущее состояние или просто написать, что вам нужна первая встреча без деталей.</p>
+        </article>
+        <article class="process-step">
+          <span>03</span>
+          <h3>Подтвердите согласие и отправьте заявку</h3>
+          <p>Перед отправкой можно спокойно открыть страницы с условиями, согласием и политикой конфиденциальности.</p>
+        </article>
+      </div>
 
-    <label for="message">Комментарий (опционально)</label>
-    <textarea id="message" name="message" rows="4"><%= values.message || '' %></textarea>
+      <article class="feature-card booking-note">
+        <h3>Что можно написать в комментарии</h3>
+        <p>Например: «хочу обсудить тревогу», «нужна первая встреча онлайн», «не очень понимаю запрос, но важно начать разговор». Этого уже достаточно.</p>
+      </article>
+    </section>
 
-    <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+    <section class="form-wrap booking-form-panel">
+      <% if (errors.form) { %><p class="banner"><%= errors.form %></p><% } %>
+      <div class="form-panel-head">
+        <p class="about-kicker">Форма записи</p>
+        <h2>Оставить заявку</h2>
+        <p class="muted">Поля сведены к минимуму, чтобы вход в процесс оставался простым.</p>
+      </div>
 
-    <label>
-      <input type="checkbox" name="consent" value="yes" <%= values.consent ? 'checked' : '' %> />
-      Я согласен(на) на обработку данных и ознакомлен(а) с <a href="/privacy">Privacy</a>, <a href="/consent">Consent</a>, <a href="/terms">Terms</a>.
-    </label>
-    <% if (errors.consent) { %><small class="error"><%= errors.consent %></small><% } %>
+      <form method="post" action="/booking" novalidate>
+        <label for="name">Имя или псевдоним</label>
+        <input id="name" name="name" value="<%= values.name || '' %>" autocomplete="name" required />
+        <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
 
-    <p class="muted">Перенос и отмена регулируются условиями на странице Terms.</p>
+        <label for="contact">Email или телефон/мессенджер</label>
+        <input id="contact" name="contact" value="<%= values.contact || '' %>" autocomplete="email" required />
+        <% if (errors.contact) { %><small class="error"><%= errors.contact %></small><% } %>
 
-    <button class="btn" type="submit">Подтвердить запись</button>
-  </form>
+        <label for="format">Предпочтительный формат</label>
+        <select id="format" name="format" required>
+          <option value="">Выберите</option>
+          <option value="онлайн" <%= values.format === 'онлайн' ? 'selected' : '' %>>Онлайн</option>
+          <option value="очно" <%= values.format === 'очно' ? 'selected' : '' %>>Очно (по согласованию)</option>
+        </select>
+        <% if (errors.format) { %><small class="error"><%= errors.format %></small><% } %>
+
+        <label for="message">Комментарий (опционально)</label>
+        <textarea id="message" name="message" rows="4"><%= values.message || '' %></textarea>
+
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+
+        <label class="consent-row">
+          <input type="checkbox" name="consent" value="yes" <%= values.consent ? 'checked' : '' %> />
+          <span>Я согласен(на) на обработку данных и ознакомлен(а) со страницами <a href="/privacy">Конфиденциальность</a>, <a href="/consent">Согласие</a> и <a href="/terms">Условия</a>.</span>
+        </label>
+        <% if (errors.consent) { %><small class="error"><%= errors.consent %></small><% } %>
+
+        <p class="muted">Перенос и отмена регулируются условиями на странице «Условия».</p>
+
+        <button class="btn" type="submit">Подтвердить запись</button>
+      </form>
+    </section>
+  </div>
 </section>
 <%- include('../partials/footer') %>

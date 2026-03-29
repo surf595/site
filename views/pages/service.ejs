@@ -1,14 +1,59 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1><%= service.title %></h1>
-  <p><%= service.details %></p>
-  <p><a class="btn" href="/booking">Выбрать время</a></p>
-</section>
-<section class="grid two">
-  <article class="card"><h2>Для кого</h2><p>Для взрослых, которым важно бережно разобрать текущее состояние и найти устойчивый рабочий ритм.</p></article>
-  <article class="card"><h2>Как проходит</h2><p>Первая встреча — ориентировка и контракт. Далее — регулярные сессии с понятными рамками.</p></article>
-  <article class="card"><h2>Условия</h2><p>Подробные правила оплаты, отмены и переноса — на странице <a href="/terms">Terms</a>.</p></article>
-  <article class="card"><h2>Вопросы</h2><p>Ответы на частые вопросы: <a href="/faq">FAQ</a>.</p></article>
+<section class="page-shell">
+  <div class="page-hero">
+    <div class="page-hero-grid">
+      <div class="page-hero-copy">
+        <p class="about-kicker">Формат работы</p>
+        <h1><%= service.title %></h1>
+        <p class="page-summary"><%= service.summary %></p>
+        <p><%= service.details %></p>
+        <p><a class="btn" href="/booking">Выбрать время</a> <a class="btn secondary" href="/contacts">Задать вопрос</a></p>
+      </div>
+      <aside class="page-aside-card">
+        <p class="about-kicker">Что важно заранее</p>
+        <ul class="detail-list">
+          <li>Первая встреча помогает лучше понять запрос и нужный формат работы.</li>
+          <li>Ритм, стоимость и организационные правила обсуждаются до начала регулярного процесса.</li>
+          <li>Если формат пока неочевиден, это нормально: его можно уточнить вместе.</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+
+  <section class="page-section">
+    <div class="page-section-head">
+      <p class="about-kicker">Ключевые ориентиры</p>
+      <h2>Главное о формате без лишней перегрузки</h2>
+    </div>
+
+    <div class="feature-grid feature-grid-2">
+      <article class="feature-card">
+        <h2>Для кого</h2>
+        <p><%= service.audience %></p>
+      </article>
+      <article class="feature-card">
+        <h2>Как проходит</h2>
+        <p><%= service.process %></p>
+      </article>
+      <article class="feature-card">
+        <h2>Организационные условия</h2>
+        <p>Подробные правила оплаты, переноса и отмены заранее собраны на странице <a href="/terms">Условия</a>.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Вопросы до начала</h2>
+        <p>Если вам важно ещё немного опоры перед записью, ответы на частые вопросы собраны в разделе <a href="/faq">FAQ</a>.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta-panel">
+    <div class="page-section-head">
+      <p class="about-kicker">Следующий шаг</p>
+      <h2>Если этот формат откликается, можно продолжить без спешки</h2>
+    </div>
+    <p class="cta-panel-copy">Даже если пока не хочется подробно рассказывать о себе, можно просто оставить заявку и коротко обозначить удобный способ связи.</p>
+    <p><a class="btn" href="/booking">Перейти к записи</a> <a class="btn secondary" href="/services">Посмотреть все форматы</a></p>
+  </section>
 </section>
 <%- include('../partials/footer') %>

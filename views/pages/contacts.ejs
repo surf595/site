@@ -1,14 +1,82 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1>Контакты</h1>
-  <p>Если удобнее сначала задать организационный вопрос — используйте контактный канал ниже.</p>
-</section>
-<section class="card">
-  <h2>Контакт</h2>
-  <p>Email: <a href="mailto:hello@example.com">hello@example.com</a></p>
-  <p>Telegram: <a href="https://t.me/example" rel="nofollow noopener">@example</a></p>
-  <p class="muted">TODO: заменить placeholder-контакты на реальные.</p>
-</section>
-<p><a class="btn" href="/faq">Перейти к FAQ</a> <a class="btn secondary" href="/booking">К записи</a></p>
+<div class="contacts-page">
+  <section class="contacts-intro">
+    <h1 class="contacts-title">Контакты</h1>
+    <p class="contacts-lead">Вы можете написать через форму обратной связи или связаться со мной напрямую. Приём осуществляется по предварительной записи.</p>
+  </section>
+
+  <section class="contacts-grid">
+    <article class="card contacts-card contacts-form-card">
+      <h2>Форма обратной связи</h2>
+      <p class="muted">Вы можете кратко описать ваш вопрос или ситуацию. После отправки сообщение будет отправлено на <a href="mailto:info@kairos.ee">info@kairos.ee</a>.</p>
+      <% if (sent) { %><p class="privacy-note">Сообщение отправлено. Ответ будет направлен на указанный вами email.</p><% } %>
+      <% if (errors.form) { %><p class="banner"><%= errors.form %></p><% } %>
+      <form class="contact-form" method="post" action="/contacts" novalidate>
+        <label for="contact-name">Имя</label>
+        <input id="contact-name" name="name" type="text" autocomplete="name" value="<%= values.name || '' %>" required />
+        <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
+
+        <label for="contact-email">Email</label>
+        <input id="contact-email" name="email" type="email" autocomplete="email" value="<%= values.email || '' %>" required />
+        <% if (errors.email) { %><small class="error"><%= errors.email %></small><% } %>
+
+        <label for="contact-message">Сообщение</label>
+        <textarea id="contact-message" name="message" rows="6" required><%= values.message || '' %></textarea>
+        <% if (errors.message) { %><small class="error"><%= errors.message %></small><% } %>
+
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
+
+        <button class="contact-submit" type="submit">Отправить сообщение</button>
+      </form>
+    </article>
+
+    <article class="card contacts-card contacts-info-card">
+      <h2>Контактная информация</h2>
+
+      <div class="contact-detail">
+        <span>Телефон</span>
+        <p><a href="tel:+3725093008">+372 509 3008</a></p>
+      </div>
+
+      <div class="contact-detail">
+        <span>Email</span>
+        <p><a href="mailto:info@kairos.ee">info@kairos.ee</a></p>
+      </div>
+
+      <div class="contact-detail">
+        <span>Адрес кабинета</span>
+        <p>Татари 56, кабинет 308<br />Таллин, Эстония</p>
+      </div>
+
+      <div class="contact-detail">
+        <span>Часы приёма</span>
+        <p>Понедельник — 09:00–19:00<br />Вторник — 09:00–19:00<br />Среда — 09:00–14:00<br />Четверг — 09:00–19:00<br />Пятница — 09:00–19:00<br />Суббота — 09:00–15:00<br />Воскресенье — выходной</p>
+      </div>
+
+      <div class="contact-detail">
+        <span>Юридическая информация</span>
+        <p>Kairos Therapy OÜ<br />Reg. nr. 17338080</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="card contacts-map-card">
+    <div class="contacts-map-header">
+      <div>
+        <h2>Карта кабинета</h2>
+        <p class="muted">Tatari tn 56-308, 10134 Tallinn</p>
+      </div>
+      <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=Tatari%2056-308%2C%2010134%20Tallinn%2C%20Estonia" rel="noopener noreferrer" target="_blank">Открыть карту</a>
+    </div>
+    <div class="map-frame contacts-map-frame">
+      <iframe
+        title="Карта кабинета Kairos Therapy OÜ"
+        src="https://maps.google.com/maps?hl=ru&amp;q=Tatari%2056-308%2C%2010134%20Tallinn%2C%20Estonia&amp;t=&amp;z=16&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+  </section>
+</div>
 <%- include('../partials/footer') %>

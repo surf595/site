@@ -1,11 +1,14 @@
 const express = require("express");
 const path = require("path");
+const { spawn } = require("child_process");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const { baseUrl, services, faq, posts, topics } = require("./content/site");
+const { baseUrl, services, faq, faqSections, posts, topics } = require("./content/site");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PRACTICE_EMAIL = "info@kairos.ee";
+const SENDMAIL_PATH = process.env.SENDMAIL_PATH || "/usr/sbin/sendmail";
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -26,6 +29,14 @@ const bookingLimiter = rateLimit({
   message: "Слишком много попыток отправки. Попробуйте чуть позже.",
 });
 
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Слишком много попыток отправки. Попробуйте чуть позже.",
+});
+
 const nav = [
   { href: "/", label: "Главная" },
   { href: "/about", label: "О специалисте" },
@@ -37,9 +48,9 @@ const nav = [
 ];
 
 const legalNav = [
-  { href: "/privacy", label: "Privacy" },
-  { href: "/consent", label: "Consent" },
-  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Конфиденциальность" },
+  { href: "/consent", label: "Согласие" },
+  { href: "/terms", label: "Условия" },
 ];
 
 function meta(title, description, pathName) {
@@ -62,6 +73,25 @@ function render(res, view, options = {}) {
   });
 }
 
+function renderContactsPage(res, options = {}) {
+  render(res, "pages/contacts", {
+    page: meta("Контакты", "Альтернативный способ связи и организационные вопросы.", "/contacts"),
+    errors: {},
+    values: {},
+    sent: false,
+    ...options,
+  });
+}
+
+function renderBookingPage(res, options = {}) {
+  render(res, "pages/booking", {
+    page: meta("Запись", "Запись на первую встречу с минимальным количеством полей.", "/booking"),
+    errors: {},
+    values: {},
+    ...options,
+  });
+}
+
 app.get("/robots.txt", (req, res) => {
   res.type("text/plain").send(`User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml\n`);
 });
@@ -73,7 +103,7 @@ app.get("/sitemap.xml", (req, res) => {
     "/about/approach",
     "/about/boundaries",
     "/services",
-    "/services/individual",
+    ...services.map((service) => `/services/${service.slug}`),
     "/format",
     "/faq",
     "/contacts",
@@ -100,6 +130,7 @@ app.get("/", (req, res) => {
       "/"
     ),
     faq,
+    topics,
   });
 });
 
@@ -147,32 +178,160 @@ app.get("/faq", (req, res) => {
   render(res, "pages/faq", {
     page: meta("FAQ", "Ответы на частые вопросы перед первой записью.", "/faq"),
     faq,
+    faqSections,
   });
 });
 
 app.get("/contacts", (req, res) => {
-  render(res, "pages/contacts", {
-    page: meta("Контакты", "Альтернативный способ связи и организационные вопросы.", "/contacts"),
+  renderContactsPage(res, {
+    sent: req.query.sent === "1",
   });
 });
 
 app.get("/booking", (req, res) => {
-  render(res, "pages/booking", {
-    page: meta("Запись", "Запись на первую встречу с минимальным количеством полей.", "/booking"),
-    errors: {},
-    values: {},
-  });
+  renderBookingPage(res);
 });
 
-function sanitize(v) {
-  return String(v || "").trim().slice(0, 1000);
+function sanitize(v, max = 1000) {
+  return String(v || "").trim().slice(0, max);
 }
 
-app.post("/booking", bookingLimiter, (req, res) => {
+function sanitizeHeaderValue(v) {
+  return String(v || "").replace(/[\r\n]+/g, " ").trim();
+}
+
+function isEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v || "").trim());
+}
+
+function encodeHeader(v) {
+  return `=?UTF-8?B?${Buffer.from(sanitizeHeaderValue(v), "utf8").toString("base64")}?=`;
+}
+
+function sendEmail({ subject, text, replyTo }) {
+  return new Promise((resolve, reject) => {
+    const process = spawn(SENDMAIL_PATH, ["-t", "-i"]);
+    let stderr = "";
+    let settled = false;
+
+    const finish = (error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    };
+
+    const timeout = setTimeout(() => {
+      process.kill("SIGTERM");
+      finish(new Error("sendmail timed out"));
+    }, 10000);
+
+    process.on("error", (error) => finish(error));
+    process.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    process.on("close", (code) => {
+      if (code === 0) {
+        finish();
+        return;
+      }
+      finish(new Error(stderr.trim() || `sendmail exited with code ${code}`));
+    });
+
+    const headers = [
+      `To: ${PRACTICE_EMAIL}`,
+      `From: Kairos Therapy <${PRACTICE_EMAIL}>`,
+      replyTo ? `Reply-To: ${sanitizeHeaderValue(replyTo)}` : "",
+      `Subject: ${encodeHeader(subject)}`,
+      "MIME-Version: 1.0",
+      'Content-Type: text/plain; charset="UTF-8"',
+      "",
+      text,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    process.stdin.end(headers);
+  });
+}
+
+function bookingEmailText(values) {
+  return [
+    "Новая запись с сайта kairos.ee",
+    "",
+    `Имя или псевдоним: ${values.name}`,
+    `Контакт: ${values.contact}`,
+    `Формат: ${values.format}`,
+    "",
+    "Комментарий:",
+    values.message || "Не указан",
+  ].join("\n");
+}
+
+function contactEmailText(values) {
+  return [
+    "Новое сообщение из формы контактов kairos.ee",
+    "",
+    `Имя: ${values.name}`,
+    `Email: ${values.email}`,
+    "",
+    "Сообщение:",
+    values.message,
+  ].join("\n");
+}
+
+app.post("/contacts", contactLimiter, async (req, res) => {
+  const values = {
+    name: sanitize(req.body.name),
+    email: sanitize(req.body.email),
+    message: sanitize(req.body.message, 4000),
+    website: sanitize(req.body.website),
+  };
+
+  const errors = {};
+  if (values.website) {
+    errors.form = "Некорректная отправка формы.";
+  }
+  if (!values.name) errors.name = "Укажите имя.";
+  if (!values.email) errors.email = "Укажите email.";
+  if (values.email && !isEmail(values.email)) errors.email = "Укажите корректный email.";
+  if (!values.message) errors.message = "Напишите сообщение.";
+
+  if (Object.keys(errors).length > 0) {
+    return renderContactsPage(res.status(400), {
+      errors,
+      values,
+    });
+  }
+
+  try {
+    await sendEmail({
+      subject: `Сообщение с сайта от ${values.name}`,
+      text: contactEmailText(values),
+      replyTo: values.email,
+    });
+  } catch (error) {
+    console.error("Contacts email delivery failed:", error);
+    return renderContactsPage(res.status(500), {
+      errors: {
+        form: `Не удалось отправить сообщение. Напишите напрямую на ${PRACTICE_EMAIL} или позвоните по телефону +372 509 3008.`,
+      },
+      values,
+    });
+  }
+
+  return res.redirect("/contacts?sent=1");
+});
+
+app.post("/booking", bookingLimiter, async (req, res) => {
   const values = {
     name: sanitize(req.body.name),
     contact: sanitize(req.body.contact),
-    message: sanitize(req.body.message),
+    message: sanitize(req.body.message, 4000),
     format: sanitize(req.body.format),
     consent: req.body.consent,
     website: sanitize(req.body.website),
@@ -188,9 +347,24 @@ app.post("/booking", bookingLimiter, (req, res) => {
   if (!values.consent) errors.consent = "Подтвердите согласие на обработку данных.";
 
   if (Object.keys(errors).length > 0) {
-    return render(res.status(400), "pages/booking", {
-      page: meta("Запись", "Запись на первую встречу с минимальным количеством полей.", "/booking"),
+    return renderBookingPage(res.status(400), {
       errors,
+      values,
+    });
+  }
+
+  try {
+    await sendEmail({
+      subject: `Новая запись с сайта: ${values.name}`,
+      text: bookingEmailText(values),
+      replyTo: isEmail(values.contact) ? values.contact : "",
+    });
+  } catch (error) {
+    console.error("Booking email delivery failed:", error);
+    return renderBookingPage(res.status(500), {
+      errors: {
+        form: `Не удалось отправить заявку. Напишите напрямую на ${PRACTICE_EMAIL} или позвоните по телефону +372 509 3008.`,
+      },
       values,
     });
   }
@@ -213,7 +387,11 @@ app.get("/privacy", (req, res) => {
 
 app.get("/consent", (req, res) => {
   render(res, "pages/consent", {
-    page: meta("Согласие на обработку данных", "Согласие на обработку данных в рамках первичного обращения.", "/consent"),
+    page: meta(
+      "Информированное согласие",
+      "Условия первичного обращения, конфиденциальности и организационной коммуникации до начала терапии.",
+      "/consent"
+    ),
   });
 });
 
@@ -243,8 +421,9 @@ app.get("/topics/:slug", (req, res, next) => {
   const topic = topics.find((t) => t.slug === req.params.slug);
   if (!topic) return next();
   render(res, "pages/topic", {
-    page: meta(topic.title, topic.excerpt, `/topics/${topic.slug}`),
+    page: meta(topic.title, topic.cardExcerpt || topic.heroExcerpt, `/topics/${topic.slug}`),
     topic,
+    topics,
   });
 });
 

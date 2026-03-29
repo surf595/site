@@ -1,9 +1,40 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1><%= topic.title %></h1>
-  <p><%= topic.excerpt %></p>
-  <p>Если тема вам откликается, можно перейти к описанию услуги и выбрать время первой встречи.</p>
-  <p><a class="btn" href="/services/individual">К услуге</a> <a class="btn secondary" href="/booking">Запись</a></p>
+<section class="topic-page">
+  <div class="topic-hero">
+    <p><a class="topic-back" href="/#topics">← Все направления</a></p>
+    <div class="topic-hero-grid">
+      <div>
+        <p class="about-kicker">Направление работы</p>
+        <h1><%= topic.title %></h1>
+      </div>
+      <div class="topic-hero-copy">
+        <p><%= topic.heroExcerpt %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="topic-layout">
+    <aside class="topic-sidebar">
+      <p class="about-kicker">Другие темы</p>
+      <nav class="topic-nav" aria-label="Другие темы">
+        <% topics.filter((item) => item.slug !== topic.slug).forEach((item) => { %>
+          <a href="/topics/<%= item.slug %>"><%= item.title %></a>
+        <% }) %>
+      </nav>
+    </aside>
+
+    <article class="topic-article">
+      <% topic.body.forEach((paragraph) => { %>
+        <p><%= paragraph %></p>
+      <% }) %>
+
+      <div class="topic-cta">
+        <h2>Обсудить запрос</h2>
+        <p><%= topic.discuss %></p>
+        <p><a class="btn secondary" href="/contacts">Связаться</a> <a class="btn" href="/booking">Записаться</a></p>
+      </div>
+    </article>
+  </div>
 </section>
 <%- include('../partials/footer') %>
