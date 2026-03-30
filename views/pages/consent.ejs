@@ -1,6 +1,12 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
 <section class="legal privacy-page">
+  <% if (cameFromBooking) { %>
+    <section class="legal-return-banner">
+      <p>Эта страница открыта из формы записи. После просмотра можно сразу вернуться к форме без потери маршрута.</p>
+      <p><a class="btn secondary" href="<%= bookingReturnHref %>">Вернуться к записи</a></p>
+    </section>
+  <% } %>
   <div class="privacy-hero">
     <p class="privacy-eyebrow">Согласие</p>
     <div class="privacy-hero-grid">
@@ -106,7 +112,7 @@
   <section id="emergency" class="privacy-section">
     <h2>7. Экстренные ситуации</h2>
     <p>Сайт, форма записи, email и обычная организационная переписка не предназначены для экстренной психологической помощи. Если существует непосредственная опасность для вас или другого человека, следует обращаться в экстренные службы по номеру <strong>112</strong>.</p>
-    <p><a class="btn" href="/booking">Перейти к записи</a> <a class="btn secondary" href="/contacts">Задать вопрос</a></p>
+    <p><a class="btn" href="<%= bookingReturnHref %>">Вернуться к записи</a> <a class="btn secondary" href="/contacts">Задать вопрос</a></p>
   </section>
 <section class="legal">
   <h1>Согласие на обработку персональных данных</h1>

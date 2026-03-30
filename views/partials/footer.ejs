@@ -1,7 +1,9 @@
 </main>
-<div class="sticky-cta">
-  <a class="btn" href="/booking">Записаться</a>
-</div>
+<% if (stickyCta) { %>
+  <div class="sticky-cta">
+    <a class="btn" href="<%= stickyCta.href %>"><%= stickyCta.label %></a>
+  </div>
+<% } %>
 <footer class="site-footer">
   <div class="container footer-grid">
     <div class="footer-meta">

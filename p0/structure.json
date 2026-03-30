@@ -111,8 +111,9 @@
     }
   ],
   "global_navigation": {
-    "header": ["/", "/about", "/services", "/booking"],
-    "mobile_menu": ["/", "/about", "/services", "/faq", "/contact", "/booking"],
+    "header": ["/", "/about", "/services", "/faq", "/contacts", "/booking"],
+    "mobile_menu": ["/", "/about", "/services", "/faq", "/contacts", "/booking"],
+    "footer": ["/contacts", "/privacy", "/consent", "/terms"],
     "sticky_cta": "Записаться"
   },
   "required_flows": [

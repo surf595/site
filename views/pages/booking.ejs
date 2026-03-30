@@ -5,25 +5,26 @@
     <div class="page-hero-grid">
       <div class="page-hero-copy">
         <p class="about-kicker">Первая встреча</p>
-        <h1>Запись на первую встречу</h1>
-        <p class="page-summary">Минимум полей, ясные условия и прозрачная обработка данных. После отправки заявка автоматически поступает на <a href="mailto:info@kairos.ee">info@kairos.ee</a>.</p>
-        <p>Если пока трудно подробно описывать ситуацию, это нормально. Для первой заявки достаточно имени, способа связи и удобного формата встречи.</p>
+        <h1>Запись занимает меньше минуты и не требует длинного объяснения ситуации</h1>
+        <p class="page-summary">Ниже только то, что действительно нужно для первого контакта: формат, удобный слот, имя или псевдоним, контакт и отдельное согласие перед отправкой.</p>
+        <p>Если перед подтверждением хочется ещё раз проверить правила, рядом остаются privacy, consent, terms и раздел про границы.</p>
       </div>
+
       <div class="page-stat-grid">
         <article class="page-stat">
           <span>Формат</span>
           <strong>Онлайн или очно</strong>
-          <p>очный формат доступен по согласованию</p>
+          <p>выбор делается до ввода контактов</p>
         </article>
         <article class="page-stat">
-          <span>Способ ответа</span>
-          <strong>Email или телефон</strong>
-          <p>укажите тот канал, который вам удобнее</p>
+          <span>Слоты</span>
+          <strong>Выбор сразу в форме</strong>
+          <p>без скрытых шагов и ухода на внешние сервисы</p>
         </article>
         <article class="page-stat">
           <span>Прозрачность</span>
-          <strong>До отправки формы</strong>
-          <p>условия, согласие и конфиденциальность доступны заранее</p>
+          <strong>До отправки</strong>
+          <p>согласие, конфиденциальность и правила отмены видны заранее</p>
         </article>
       </div>
     </div>
@@ -32,73 +33,126 @@
   <div class="booking-layout">
     <section class="page-section page-section-soft booking-intro">
       <div class="page-section-head">
-        <p class="about-kicker">Как проходит запись</p>
-        <h2>Небольшой ориентир перед отправкой формы</h2>
+        <p class="about-kicker">Как устроен flow</p>
+        <h2>Цель этой страницы — довести до записи без перегруза и без скрытых условий</h2>
       </div>
 
       <div class="process-grid booking-steps">
         <article class="process-step">
           <span>01</span>
-          <h3>Оставьте только базовые данные</h3>
-          <p>Имя или псевдоним, удобный контакт и предпочтительный формат встречи уже достаточны для первого шага.</p>
+          <h3>Сначала выбор, потом данные</h3>
+          <p>Формат встречи и удобный слот выбираются раньше, чем вы вводите имя и контакт.</p>
         </article>
         <article class="process-step">
           <span>02</span>
-          <h3>Добавьте комментарий, если это полезно</h3>
-          <p>Можно коротко обозначить тему, текущее состояние или просто написать, что вам нужна первая встреча без деталей.</p>
+          <h3>Минимум обязательных полей</h3>
+          <p>Имя или псевдоним, удобный способ связи и короткий комментарий только если он полезен именно вам.</p>
         </article>
         <article class="process-step">
           <span>03</span>
-          <h3>Подтвердите согласие и отправьте заявку</h3>
-          <p>Перед отправкой можно спокойно открыть страницы с условиями, согласием и политикой конфиденциальности.</p>
+          <h3>Legal без тупика</h3>
+          <p>Любую страницу с условиями можно открыть сейчас и вернуться обратно в форму без ощущения, что вы потеряли маршрут.</p>
         </article>
       </div>
 
       <article class="feature-card booking-note">
         <h3>Что можно написать в комментарии</h3>
-        <p>Например: «хочу обсудить тревогу», «нужна первая встреча онлайн», «не очень понимаю запрос, но важно начать разговор». Этого уже достаточно.</p>
+        <p>Например: «хочу обсудить тревогу», «нужна первая встреча онлайн», «пока не очень понимаю запрос, но хочу начать разговор». Этого уже достаточно.</p>
+      </article>
+
+      <article class="feature-card booking-note">
+        <h3>Проверить условия до отправки</h3>
+        <div class="booking-legal-links">
+          <% bookingLegalLinks.forEach((link) => { %>
+            <a href="<%= link.href %>"><%= link.label %></a>
+          <% }) %>
+        </div>
       </article>
     </section>
 
-    <section class="form-wrap booking-form-panel">
+    <section id="booking-form" class="form-wrap booking-form-panel">
       <% if (errors.form) { %><p class="banner"><%= errors.form %></p><% } %>
+
       <div class="form-panel-head">
         <p class="about-kicker">Форма записи</p>
         <h2>Оставить заявку</h2>
-        <p class="muted">Поля сведены к минимуму, чтобы вход в процесс оставался простым.</p>
+        <p class="muted">После отправки вы сразу увидите подтверждение и следующий шаг.</p>
       </div>
 
       <form method="post" action="/booking" novalidate>
-        <label for="name">Имя или псевдоним</label>
-        <input id="name" name="name" value="<%= values.name || '' %>" autocomplete="name" required />
-        <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
+        <fieldset class="booking-fieldset">
+          <legend>1. Выберите формат встречи</legend>
+          <div class="booking-choice-grid">
+            <label class="choice-card">
+              <input type="radio" name="format" value="онлайн" <%= values.format === 'онлайн' ? 'checked' : '' %> />
+              <span class="choice-card-body">
+                <strong>Онлайн</strong>
+                <small>подходит, если важна гибкость и приватное пространство дома</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="format" value="очно" <%= values.format === 'очно' ? 'checked' : '' %> />
+              <span class="choice-card-body">
+                <strong>Очно в Таллине</strong>
+                <small>по согласованию, кабинет Tatari 56-308</small>
+              </span>
+            </label>
+          </div>
+          <% if (errors.format) { %><small class="error"><%= errors.format %></small><% } %>
+        </fieldset>
 
-        <label for="contact">Email или телефон/мессенджер</label>
-        <input id="contact" name="contact" value="<%= values.contact || '' %>" autocomplete="email" required />
-        <% if (errors.contact) { %><small class="error"><%= errors.contact %></small><% } %>
+        <fieldset class="booking-fieldset">
+          <legend>2. Выберите удобный слот</legend>
+          <div class="slot-grid">
+            <% bookingSlots.forEach((slot) => { %>
+              <label class="slot-card">
+                <input type="radio" name="slot" value="<%= slot.id %>" <%= values.slot === slot.id ? 'checked' : '' %> />
+                <span class="choice-card-body">
+                  <strong><%= slot.dayLabel %></strong>
+                  <small><%= slot.timeLabel %> · 50 минут</small>
+                </span>
+              </label>
+            <% }) %>
+          </div>
+          <% if (errors.slot) { %><small class="error"><%= errors.slot %></small><% } %>
+        </fieldset>
 
-        <label for="format">Предпочтительный формат</label>
-        <select id="format" name="format" required>
-          <option value="">Выберите</option>
-          <option value="онлайн" <%= values.format === 'онлайн' ? 'selected' : '' %>>Онлайн</option>
-          <option value="очно" <%= values.format === 'очно' ? 'selected' : '' %>>Очно (по согласованию)</option>
-        </select>
-        <% if (errors.format) { %><small class="error"><%= errors.format %></small><% } %>
+        <fieldset class="booking-fieldset">
+          <legend>3. Как с вами связаться</legend>
 
-        <label for="message">Комментарий (опционально)</label>
-        <textarea id="message" name="message" rows="4"><%= values.message || '' %></textarea>
+          <label for="name">Имя или псевдоним</label>
+          <input id="name" name="name" value="<%= values.name || '' %>" autocomplete="name" required />
+          <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
+
+          <label for="contact">Email или телефон/мессенджер</label>
+          <input id="contact" name="contact" value="<%= values.contact || '' %>" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" required />
+          <% if (errors.contact) { %><small class="error"><%= errors.contact %></small><% } %>
+
+          <label for="message">Комментарий (опционально)</label>
+          <textarea id="message" name="message" rows="4"><%= values.message || '' %></textarea>
+        </fieldset>
 
         <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px" />
 
+        <div class="booking-legal-panel">
+          <p class="booking-legal-copy">Перед отправкой можно открыть все обязательные страницы и затем вернуться обратно в форму:</p>
+          <div class="booking-legal-links booking-legal-links-inline">
+            <% bookingLegalLinks.forEach((link) => { %>
+              <a href="<%= link.href %>"><%= link.label %></a>
+            <% }) %>
+          </div>
+        </div>
+
         <label class="consent-row">
           <input type="checkbox" name="consent" value="yes" <%= values.consent ? 'checked' : '' %> />
-          <span>Я согласен(на) на обработку данных и ознакомлен(а) со страницами <a href="/privacy">Конфиденциальность</a>, <a href="/consent">Согласие</a> и <a href="/terms">Условия</a>.</span>
+          <span>Я подтверждаю, что ознакомился(ась) с условиями, конфиденциальностью и согласием на обработку данных перед отправкой формы.</span>
         </label>
         <% if (errors.consent) { %><small class="error"><%= errors.consent %></small><% } %>
 
-        <p class="muted">Перенос и отмена регулируются условиями на странице «Условия».</p>
-
-        <button class="btn" type="submit">Подтвердить запись</button>
+        <div class="booking-submit-panel">
+          <p class="booking-rules">Короткое правило рядом с действием: перенос или отмена без оплаты возможны не менее чем за 24 часа. Полные условия доступны на странице <a href="/terms?from=booking">Terms</a>.</p>
+          <button class="btn" type="submit">Подтвердить запись</button>
+        </div>
       </form>
     </section>
   </div>

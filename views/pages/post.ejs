@@ -1,5 +1,13 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
+<article class="card" style="margin-top:1.2rem">
+  <h1><%= post.title %></h1>
+  <p class="muted"><%= post.excerpt %></p>
+  <% post.body.forEach((p) => { %>
+    <p><%= p %></p>
+  <% }) %>
+  <hr />
+  <p><a href="/services/individual">Перейти к индивидуальной работе</a> · <a href="/booking#booking-form">Записаться</a></p>
 <article class="post-article">
   <header class="card">
     <p class="post-label">Блог</p>
