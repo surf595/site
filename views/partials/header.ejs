@@ -35,4 +35,20 @@
   </div>
 </header>
 <div class="menu-scrim" data-menu-scrim aria-hidden="true"></div>
+<a class="skip-link" href="#main-content">Перейти к содержимому</a>
+<header class="site-header">
+  <div class="container header-row">
+    <a class="brand" href="/">Kairos — психологическая практика</a>
+    <button class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-nav">Меню</button>
+    <nav id="site-nav" class="main-nav" data-main-nav aria-label="Главное меню">
+      <ul>
+        <% nav.forEach((item) => { %>
+          <li><a href="<%= item.href %>"
+            <% if (page && page.currentPath === item.href) { %>aria-current="page"<% } %>
+          ><%= item.label %></a></li>
+        <% }) %>
+      </ul>
+    </nav>
+  </div>
+</header>
 <main id="main-content" class="container">

@@ -85,5 +85,18 @@
     <p class="cta-panel-copy">Если вы чувствуете только общее напряжение или неопределённость, этого уже достаточно для первого шага. На старте не требуется точная самодиагностика.</p>
     <p><a class="btn secondary" href="/faq">Сначала посмотреть FAQ</a> <a class="btn" href="/booking#booking-form">Перейти к записи</a></p>
   </section>
+<section class="hero">
+  <h1>Услуги</h1>
+  <p>Выберите формат, который лучше подходит вашему запросу. Работа проходит на русском языке — онлайн или очно в Таллине.</p>
+</section>
+<section class="grid two">
+  <% services.forEach((s) => { %>
+    <article class="card">
+      <h2><%= s.title %></h2>
+      <p><%= s.summary %></p>
+      <p class="service-meta"><strong><%= s.price %></strong> · <%= s.duration %></p>
+      <p><a class="btn" href="/services/<%= s.slug %>">Подробнее</a></p>
+    </article>
+  <% }) %>
 </section>
 <%- include('../partials/footer') %>

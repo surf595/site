@@ -62,3 +62,14 @@ if (toggle && nav) {
 
   syncMenuState(false);
 }
+
+const bookingForm = document.querySelector('form[action="/booking"]');
+if (bookingForm) {
+  bookingForm.addEventListener('submit', () => {
+    const btn = bookingForm.querySelector('button[type="submit"]');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Отправляем…';
+    }
+  });
+}
