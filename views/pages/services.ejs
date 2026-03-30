@@ -1,30 +1,34 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
+<%
+  const primaryService = services.find((item) => item.status === "primary") || services[0];
+  const secondaryServices = services.filter((item) => item.slug !== primaryService.slug);
+%>
 <section class="page-shell">
   <div class="page-hero">
     <div class="page-hero-grid">
       <div class="page-hero-copy">
         <p class="about-kicker">Форматы работы</p>
-        <h1>Услуги</h1>
-        <p class="page-summary">Выберите формат, который лучше подходит вашему запросу: индивидуальный, групповой или семейный.</p>
-        <p>Если пока трудно понять, какой вариант подходит больше, это можно обсудить до первой встречи или прямо на ней.</p>
-        <p><a class="btn" href="/booking">Записаться</a> <a class="btn secondary" href="/contacts">Уточнить формат</a></p>
+        <h1>Страница услуг помогает быстро выйти на нужный следующий шаг, а не потеряться в выборе</h1>
+        <p class="page-summary">В MVP основной маршрут ведёт в индивидуальную работу для взрослых. Дополнительные форматы можно обсудить отдельно, если после первичного контакта станет ясно, что они подходят лучше.</p>
+        <p><a class="btn" href="/services/<%= primaryService.slug %>">Открыть основную услугу</a> <a class="btn secondary" href="/contacts">Уточнить формат</a></p>
       </div>
+
       <div class="page-stat-grid">
         <article class="page-stat">
-          <span>Индивидуальная работа</span>
-          <strong>60 €</strong>
-          <p>50 минут, очно или онлайн</p>
+          <span>Основной маршрут</span>
+          <strong><%= primaryService.title %></strong>
+          <p><%= primaryService.price || "60 €" %> · <%= primaryService.sessionLength || "50 минут" %></p>
         </article>
         <article class="page-stat">
-          <span>Групповая работа</span>
-          <strong>20 €</strong>
-          <p>безопасный формат взаимодействия</p>
+          <span>Формат</span>
+          <strong><%= primaryService.format || "Онлайн и очно" %></strong>
+          <p>подтверждается до начала регулярной работы</p>
         </article>
         <article class="page-stat">
-          <span>Семейная работа</span>
-          <strong>90 €</strong>
-          <p>когда запрос касается всей системы отношений</p>
+          <span>До записи</span>
+          <strong>Не больше 2 шагов</strong>
+          <p>из услуги можно сразу перейти к форме записи или к организационному вопросу</p>
         </article>
       </div>
     </div>
@@ -32,22 +36,42 @@
 
   <section class="page-section">
     <div class="page-section-head">
-      <p class="about-kicker">Выбор формата</p>
-      <h2>Каждая страница помогает быстро понять, подходит ли вам этот тип работы</h2>
-      <p class="muted">Ниже — три формата с коротким ориентиром: для кого они, как обычно проходят и что в них особенно важно.</p>
+      <p class="about-kicker">P0-маршрут</p>
+      <h2>Для MVP приоритетен один понятный путь: услуга -> запись -> подтверждение</h2>
     </div>
 
-    <div class="feature-grid service-grid">
-      <% services.forEach((s, index) => { %>
-        <article class="feature-card service-link-card">
-          <p class="feature-index">0<%= index + 1 %></p>
-          <h2><%= s.title %></h2>
-          <p class="service-card-summary"><%= s.summary %></p>
+    <article class="feature-card feature-card-primary">
+      <span class="feature-index">Основная услуга</span>
+      <h2><%= primaryService.title %></h2>
+      <p class="service-card-summary"><%= primaryService.summary %></p>
+      <div class="stack-list">
+        <p><strong>Для кого:</strong> <%= primaryService.audience %></p>
+        <p><strong>Как проходит:</strong> <%= primaryService.process %></p>
+        <p><strong>Что важно заранее:</strong> стоимость, длительность, правила переноса и legal-ссылки видны до отправки формы.</p>
+      </div>
+      <p><a class="btn" href="/services/<%= primaryService.slug %>">Открыть страницу услуги</a> <a class="btn secondary" href="/booking#booking-form">Сразу к записи</a></p>
+    </article>
+  </section>
+
+  <section class="page-section page-section-soft">
+    <div class="page-section-head">
+      <p class="about-kicker">Дополнительные форматы</p>
+      <h2>Они остаются на сайте, но не размывают основной сценарий первой записи</h2>
+      <p class="muted">Если после первичного контакта станет понятно, что нужен другой формат, это можно отдельно обсудить без давления и лишних переходов.</p>
+    </div>
+
+    <div class="feature-grid feature-grid-2">
+      <% secondaryServices.forEach((service) => { %>
+        <article class="feature-card service-link-card service-link-card-secondary">
+          <span class="service-badge">Дополнительный формат</span>
+          <h3><%= service.title %></h3>
+          <p class="service-card-summary"><%= service.summary %></p>
           <div class="stack-list">
-            <p><strong>Для кого:</strong> <%= s.audience %></p>
-            <p><strong>Как проходит:</strong> <%= s.process %></p>
+            <p><strong>Для кого:</strong> <%= service.audience %></p>
+            <p><strong>Как проходит:</strong> <%= service.process %></p>
+            <% if (service.availability) { %><p><strong>Как подключается:</strong> <%= service.availability %>.</p><% } %>
           </div>
-          <p><a class="btn" href="/services/<%= s.slug %>">Открыть формат</a></p>
+          <p><a class="btn secondary" href="/services/<%= service.slug %>">Подробнее</a> <a class="btn secondary" href="/contacts">Обсудить формат</a></p>
         </article>
       <% }) %>
     </div>
@@ -55,11 +79,11 @@
 
   <section class="cta-panel">
     <div class="page-section-head">
-      <p class="about-kicker">Нужна опора перед выбором</p>
-      <h2>Необязательно сразу точно знать, какой формат вам нужен</h2>
+      <p class="about-kicker">Если формат пока неочевиден</p>
+      <h2>Можно не решать всё заранее и всё равно не выпадать из маршрута</h2>
     </div>
-    <p class="cta-panel-copy">Если вы пока только чувствуете, что стало тяжело, этого уже достаточно для первого шага. Формат можно определить вместе, исходя из вашего запроса и жизненной ситуации.</p>
-    <p><a class="btn secondary" href="/contacts">Задать вопрос</a> <a class="btn" href="/booking">Перейти к записи</a></p>
+    <p class="cta-panel-copy">Если вы чувствуете только общее напряжение или неопределённость, этого уже достаточно для первого шага. На старте не требуется точная самодиагностика.</p>
+    <p><a class="btn secondary" href="/faq">Сначала посмотреть FAQ</a> <a class="btn" href="/booking#booking-form">Перейти к записи</a></p>
   </section>
 </section>
 <%- include('../partials/footer') %>

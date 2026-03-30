@@ -1,6 +1,12 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
 <section class="legal terms-page">
+  <% if (cameFromBooking) { %>
+    <section class="legal-return-banner">
+      <p>Эта страница открыта из формы записи. После просмотра можно сразу вернуться к форме без потери маршрута.</p>
+      <p><a class="btn secondary" href="<%= bookingReturnHref %>">Вернуться к записи</a></p>
+    </section>
+  <% } %>
   <div class="terms-hero">
     <p class="privacy-eyebrow">Условия</p>
     <h1>Условия оплаты, переноса и отмены</h1>
@@ -60,7 +66,7 @@
   <section class="terms-section">
     <h2>Вопросы до начала работы</h2>
     <p>Если какие-то организационные моменты остаются неясными, лучше уточнить их до первой встречи. Это помогает создать более надёжную и спокойную рабочую рамку с самого начала.</p>
-    <p><a class="btn secondary" href="/contacts">Задать вопрос</a> <a class="btn" href="/booking">Перейти к записи</a></p>
+    <p><a class="btn secondary" href="/contacts">Задать вопрос</a> <a class="btn" href="<%= bookingReturnHref %>">Вернуться к записи</a></p>
   </section>
 </section>
 <%- include('../partials/footer') %>

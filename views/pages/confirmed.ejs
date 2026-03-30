@@ -1,17 +1,68 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
-<section class="hero">
-  <h1>Запись отправлена</h1>
-  <p>Спасибо. Заявка принята. Предпочтительный формат: <strong><%= selectedFormat %></strong>.</p>
-  <p>Мы свяжемся с вами и подтвердим время встречи.</p>
-</section>
-<section class="card">
-  <h2>Что дальше</h2>
-  <ul>
-    <li>Проверьте почту/мессенджер для подтверждения времени.</li>
-    <li>При необходимости переноса используйте <a href="/terms">правила переноса и отмены</a>.</li>
-    <li>Если есть организационный вопрос — <a href="/contacts">свяжитесь</a>.</li>
-  </ul>
-  <p><a class="btn" href="/booking">Новая запись</a></p>
+<section class="page-shell confirmed-page">
+  <div class="page-hero">
+    <div class="page-hero-grid">
+      <div class="page-hero-copy">
+        <p class="about-kicker">Подтверждение записи</p>
+        <h1>Заявка отправлена, и дальше не нужно гадать, что делать</h1>
+        <p class="page-summary">Выбранный формат и слот зафиксированы в заявке. Отдельным сообщением будет подтверждено итоговое время встречи и организационные детали.</p>
+        <p><a class="btn" href="/booking#booking-form">Новая запись</a> <a class="btn secondary" href="/contacts">Связаться</a></p>
+      </div>
+
+      <div class="page-stat-grid">
+        <article class="page-stat">
+          <span>Формат</span>
+          <strong><%= selectedFormat %></strong>
+          <p>он будет подтверждён в ответном сообщении</p>
+        </article>
+        <article class="page-stat">
+          <span>Выбранный слот</span>
+          <strong><%= selectedSlot %></strong>
+          <p>если потребуется корректировка, это можно обсудить отдельно</p>
+        </article>
+        <article class="page-stat">
+          <span>Следующий шаг</span>
+          <strong>Проверьте почту или мессенджер</strong>
+          <p>ответ придёт на указанный вами контакт</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <section class="page-section">
+    <div class="feature-grid feature-grid-2">
+      <article class="feature-card">
+        <h3>Что можно сделать сейчас</h3>
+        <ul class="bullet-list">
+          <li>сохранить выбранный слот как напоминание в календаре</li>
+          <li>при необходимости заранее уточнить организационный вопрос</li>
+          <li>посмотреть правила переноса и отмены до подтверждения времени</li>
+        </ul>
+      </article>
+
+      <article class="feature-card">
+        <h3>Что не нужно делать</h3>
+        <ul class="bullet-list">
+          <li>не нужно повторно отправлять заявку, если форма уже подтвердила отправку</li>
+          <li>не нужно заранее подробно готовить рассказ о себе</li>
+          <li>не нужно искать legal-документы по всему сайту: они остаются рядом</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="cta-panel">
+    <div class="page-section-head">
+      <p class="about-kicker">Следующие действия</p>
+      <h2>Маршрут после отправки остаётся таким же ясным, как и сама форма</h2>
+    </div>
+    <p class="cta-panel-copy">Если хотите, можно сразу сохранить слот как напоминание. Если нужно проверить правила ещё раз, ниже остаются быстрые переходы к terms и контактам.</p>
+    <p class="inline-actions">
+      <% if (calendarUrl) { %><a class="btn" href="<%= calendarUrl %>">Добавить в календарь</a><% } %>
+      <a class="btn secondary" href="/terms">Перенос и отмена</a>
+      <a class="btn secondary" href="/contacts">Связаться</a>
+    </p>
+  </section>
 </section>
 <%- include('../partials/footer') %>

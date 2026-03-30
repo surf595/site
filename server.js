@@ -7,9 +7,13 @@ const { baseUrl, services, faq, faqSections, posts, topics } = require("./conten
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || "0.0.0.0";
 const PRACTICE_EMAIL = "info@kairos.ee";
 const SENDMAIL_PATH = process.env.SENDMAIL_PATH || "/usr/sbin/sendmail";
+const BOOKING_RETURN_HREF = "/booking#booking-form";
+const BOOKING_TIMEZONE = "Europe/Tallinn";
 
+app.set("trust proxy", 1);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
@@ -41,7 +45,6 @@ const nav = [
   { href: "/", label: "Главная" },
   { href: "/about", label: "О специалисте" },
   { href: "/services", label: "Услуги" },
-  { href: "/format", label: "Формат" },
   { href: "/faq", label: "FAQ" },
   { href: "/contacts", label: "Контакты" },
   { href: "/booking", label: "Запись" },
@@ -53,10 +56,114 @@ const legalNav = [
   { href: "/terms", label: "Условия" },
 ];
 
+const bookingDateFormatter = new Intl.DateTimeFormat("ru-RU", {
+  weekday: "short",
+  day: "numeric",
+  month: "long",
+  timeZone: BOOKING_TIMEZONE,
+});
+
+const bookingTimeFormatter = new Intl.DateTimeFormat("ru-RU", {
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: BOOKING_TIMEZONE,
+});
+
+function pad(value) {
+  return String(value).padStart(2, "0");
+}
+
+function createBookingSlot(start) {
+  const end = new Date(start);
+  end.setMinutes(end.getMinutes() + 50);
+
+  const dayLabel = bookingDateFormatter.format(start).replace(/\.$/, "");
+  const timeLabel = bookingTimeFormatter.format(start);
+
+  return {
+    id: `${start.getFullYear()}${pad(start.getMonth() + 1)}${pad(start.getDate())}-${pad(start.getHours())}${pad(start.getMinutes())}`,
+    dayLabel,
+    timeLabel,
+    label: `${dayLabel} · ${timeLabel}`,
+    startIso: start.toISOString(),
+    endIso: end.toISOString(),
+  };
+}
+
+function buildBookingSlots(reference = new Date()) {
+  const slots = [];
+  const cursor = new Date(reference);
+  cursor.setHours(0, 0, 0, 0);
+  const weekdayTemplates = [
+    { hour: 10, minute: 0 },
+    { hour: 13, minute: 30 },
+    { hour: 17, minute: 30 },
+  ];
+  const saturdayTemplates = [
+    { hour: 11, minute: 0 },
+    { hour: 13, minute: 0 },
+  ];
+
+  while (slots.length < 6) {
+    cursor.setDate(cursor.getDate() + 1);
+    const day = cursor.getDay();
+    if (day === 0) continue;
+
+    const templates = day === 6 ? saturdayTemplates : weekdayTemplates;
+
+    templates.forEach((template) => {
+      if (slots.length >= 6) return;
+
+      const start = new Date(cursor);
+      start.setHours(template.hour, template.minute, 0, 0);
+      if (start <= reference) return;
+      slots.push(createBookingSlot(start));
+    });
+  }
+
+  return slots;
+}
+
+function getBookingSlotById(slotId) {
+  return buildBookingSlots().find((slot) => slot.id === slotId) || null;
+}
+
+function parseIsoDate(value) {
+  const date = new Date(String(value || ""));
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatHumanSlot(start, fallbackLabel = "") {
+  const date = parseIsoDate(start);
+  if (!date) return fallbackLabel || "Время будет подтверждено отдельно";
+  return `${bookingDateFormatter.format(date).replace(/\.$/, "")} · ${bookingTimeFormatter.format(date)}`;
+}
+
+function formatIcsDate(value) {
+  return new Date(value).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+}
+
+function escapeIcsText(value) {
+  return String(value || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\r?\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+function resolveStickyCta(pathName) {
+  if (pathName === "/booking") return null;
+  if (["/privacy", "/consent", "/terms"].includes(pathName)) {
+    return { href: BOOKING_RETURN_HREF, label: "Вернуться к записи" };
+  }
+  return { href: BOOKING_RETURN_HREF, label: "Записаться" };
+}
+
 function meta(title, description, pathName) {
   return {
     title,
     description,
+    currentPath: pathName,
     canonical: `${baseUrl}${pathName}`,
     ogTitle: title,
     ogDescription: description,
@@ -65,10 +172,13 @@ function meta(title, description, pathName) {
 }
 
 function render(res, view, options = {}) {
+  const currentPath = options.page && options.page.currentPath ? options.page.currentPath : "";
   res.render(view, {
     nav,
     legalNav,
     baseUrl,
+    bookingReturnHref: BOOKING_RETURN_HREF,
+    stickyCta: options.stickyCta === undefined ? resolveStickyCta(currentPath) : options.stickyCta,
     ...options,
   });
 }
@@ -88,6 +198,14 @@ function renderBookingPage(res, options = {}) {
     page: meta("Запись", "Запись на первую встречу с минимальным количеством полей.", "/booking"),
     errors: {},
     values: {},
+    bookingSlots: buildBookingSlots(),
+    bookingLegalLinks: [
+      { href: "/privacy?from=booking", label: "Конфиденциальность" },
+      { href: "/consent?from=booking", label: "Согласие" },
+      { href: "/terms?from=booking", label: "Условия" },
+      { href: "/about/boundaries?from=booking", label: "Границы" },
+    ],
+    stickyCta: null,
     ...options,
   });
 }
@@ -149,6 +267,7 @@ app.get("/about/approach", (req, res) => {
 app.get("/about/boundaries", (req, res) => {
   render(res, "pages/boundaries", {
     page: meta("Границы и безопасность", "Конфиденциальность, рамки и правила взаимодействия.", "/about/boundaries"),
+    cameFromBooking: req.query.from === "booking",
   });
 });
 
@@ -266,6 +385,7 @@ function bookingEmailText(values) {
     `Имя или псевдоним: ${values.name}`,
     `Контакт: ${values.contact}`,
     `Формат: ${values.format}`,
+    `Предпочтительный слот: ${values.slotLabel}`,
     "",
     "Комментарий:",
     values.message || "Не указан",
@@ -333,17 +453,20 @@ app.post("/booking", bookingLimiter, async (req, res) => {
     contact: sanitize(req.body.contact),
     message: sanitize(req.body.message, 4000),
     format: sanitize(req.body.format),
+    slot: sanitize(req.body.slot),
     consent: req.body.consent,
     website: sanitize(req.body.website),
   };
 
   const errors = {};
+  const selectedSlot = getBookingSlotById(values.slot);
   if (values.website) {
     errors.form = "Некорректная отправка формы.";
   }
   if (!values.name) errors.name = "Укажите имя или псевдоним.";
   if (!values.contact) errors.contact = "Укажите email или телефон/мессенджер.";
   if (!values.format) errors.format = "Выберите предпочтительный формат.";
+  if (!selectedSlot) errors.slot = "Выберите удобный слот для первой встречи.";
   if (!values.consent) errors.consent = "Подтвердите согласие на обработку данных.";
 
   if (Object.keys(errors).length > 0) {
@@ -356,7 +479,10 @@ app.post("/booking", bookingLimiter, async (req, res) => {
   try {
     await sendEmail({
       subject: `Новая запись с сайта: ${values.name}`,
-      text: bookingEmailText(values),
+      text: bookingEmailText({
+        ...values,
+        slotLabel: selectedSlot.label,
+      }),
       replyTo: isEmail(values.contact) ? values.contact : "",
     });
   } catch (error) {
@@ -369,19 +495,84 @@ app.post("/booking", bookingLimiter, async (req, res) => {
     });
   }
 
-  return res.redirect(`/booking/confirmed?format=${encodeURIComponent(values.format)}`);
+  const confirmedParams = new URLSearchParams({
+    format: values.format,
+    slot: selectedSlot.label,
+    start: selectedSlot.startIso,
+    end: selectedSlot.endIso,
+  });
+
+  return res.redirect(`/booking/confirmed?${confirmedParams.toString()}`);
 });
 
 app.get("/booking/confirmed", (req, res) => {
+  const slotLabel = sanitize(req.query.slot, 200);
+  const slotStart = sanitize(req.query.start, 80);
+  const slotEnd = sanitize(req.query.end, 80);
+  const hasValidSlot = parseIsoDate(slotStart) && parseIsoDate(slotEnd);
+  const calendarParams = hasValidSlot
+    ? new URLSearchParams({
+        start: slotStart,
+        end: slotEnd,
+        format: sanitize(req.query.format, 40) || "онлайн",
+      }).toString()
+    : "";
+
   render(res, "pages/confirmed", {
     page: meta("Подтверждение записи", "Запись отправлена. Что дальше и как подготовиться.", "/booking/confirmed"),
     selectedFormat: req.query.format || "онлайн",
+    selectedSlot: formatHumanSlot(slotStart, slotLabel),
+    calendarUrl: calendarParams ? `/booking/calendar.ics?${calendarParams}` : "",
   });
+});
+
+app.get("/booking/calendar.ics", (req, res) => {
+  const start = sanitize(req.query.start, 80);
+  const end = sanitize(req.query.end, 80);
+  const format = sanitize(req.query.format, 40) || "онлайн";
+  const startDate = parseIsoDate(start);
+  const endDate = parseIsoDate(end);
+
+  if (!startDate || !endDate || endDate <= startDate) {
+    return res.status(400).type("text/plain").send("Некорректный слот для календаря.");
+  }
+
+  const summary =
+    format === "очно" ? "Первая встреча — очно в Kairos Therapy" : "Первая встреча — онлайн в Kairos Therapy";
+  const location = format === "очно" ? "Tatari tn 56-308, 10134 Tallinn" : "Онлайн";
+  const description = [
+    "Предварительно выбранный слот после записи с сайта Kairos Therapy.",
+    "Точное подтверждение времени приходит отдельным сообщением.",
+    "Если нужен перенос или отмена, откройте kairos.ee/terms.",
+  ].join(" ");
+
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Kairos Therapy//Booking//RU",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:kairos-${formatIcsDate(start)}@kairos.ee`,
+    `DTSTAMP:${formatIcsDate(new Date().toISOString())}`,
+    `DTSTART:${formatIcsDate(start)}`,
+    `DTEND:${formatIcsDate(end)}`,
+    `SUMMARY:${escapeIcsText(summary)}`,
+    `DESCRIPTION:${escapeIcsText(description)}`,
+    `LOCATION:${escapeIcsText(location)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+
+  res.type("text/calendar; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="kairos-booking-slot.ics"');
+  return res.send(ics);
 });
 
 app.get("/privacy", (req, res) => {
   render(res, "pages/privacy", {
     page: meta("Политика конфиденциальности", "Обработка и хранение персональных данных.", "/privacy"),
+    cameFromBooking: req.query.from === "booking",
   });
 });
 
@@ -392,12 +583,14 @@ app.get("/consent", (req, res) => {
       "Условия первичного обращения, конфиденциальности и организационной коммуникации до начала терапии.",
       "/consent"
     ),
+    cameFromBooking: req.query.from === "booking",
   });
 });
 
 app.get("/terms", (req, res) => {
   render(res, "pages/terms", {
     page: meta("Условия оплаты и отмены", "Организационные условия: оплата, перенос и отмена встреч.", "/terms"),
+    cameFromBooking: req.query.from === "booking",
   });
 });
 
@@ -433,6 +626,6 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server is running on http://${HOST}:${PORT}`);
 });

@@ -33,6 +33,14 @@ for page in pages:
     links = set(page.get("footer_legal_links", []))
     assert legal.issubset(links), f"Footer legal links incomplete on {page['path']}"
 
+nav = data.get("global_navigation", {})
+expected_header = ["/", "/about", "/services", "/faq", "/contacts", "/booking"]
+expected_footer = ["/contacts", "/privacy", "/consent", "/terms"]
+assert nav.get("header") == expected_header, f"Unexpected header nav: {nav.get('header')}"
+assert nav.get("mobile_menu") == expected_header, f"Unexpected mobile nav: {nav.get('mobile_menu')}"
+assert nav.get("footer") == expected_footer, f"Unexpected footer nav: {nav.get('footer')}"
+assert nav.get("sticky_cta") == "Записаться", "Sticky CTA must remain 'Записаться'"
+
 # 2-step rule for content pages to booking
 content_pages = ["/", "/services", "/services/individual", "/about", "/about/boundaries"]
 by_path = {x["path"]: x for x in pages}

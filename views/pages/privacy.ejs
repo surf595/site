@@ -1,6 +1,12 @@
 <%- include('../partials/head') %>
 <%- include('../partials/header') %>
 <section class="legal privacy-page">
+  <% if (cameFromBooking) { %>
+    <section class="legal-return-banner">
+      <p>Эта страница открыта из формы записи. После просмотра можно сразу вернуться к форме без потери маршрута.</p>
+      <p><a class="btn secondary" href="<%= bookingReturnHref %>">Вернуться к записи</a></p>
+    </section>
+  <% } %>
   <div class="privacy-hero">
     <p class="privacy-eyebrow">Конфиденциальность</p>
     <div class="privacy-hero-grid">
@@ -107,7 +113,7 @@
   <section id="contact" class="privacy-section">
     <h2>7. Контакты и обновление политики</h2>
     <p>Если у вас есть вопрос до первой встречи и вы хотите уточнить, как используется конкретный тип данных, напишите или позвоните до отправки формы. При изменении способов записи, хранения данных или внешних сервисов эта политика обновляется.</p>
-    <p><a class="btn" href="/booking">Перейти к записи</a> <a class="btn secondary" href="/contacts">Контакты</a></p>
+    <p><a class="btn" href="<%= bookingReturnHref %>">Вернуться к записи</a> <a class="btn secondary" href="/contacts">Контакты</a></p>
   </section>
 </section>
 <%- include('../partials/footer') %>

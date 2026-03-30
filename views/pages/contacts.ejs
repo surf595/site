@@ -3,7 +3,8 @@
 <div class="contacts-page">
   <section class="contacts-intro">
     <h1 class="contacts-title">Контакты</h1>
-    <p class="contacts-lead">Вы можете написать через форму обратной связи или связаться со мной напрямую. Приём осуществляется по предварительной записи.</p>
+    <p class="contacts-lead">Это альтернативный путь связи, если перед записью хочется задать организационный вопрос. Если вы уже готовы к первой встрече, быстрее всего перейти сразу в форму записи.</p>
+    <p><a class="btn secondary" href="/faq">Сначала посмотреть FAQ</a> <a class="btn" href="/booking#booking-form">Перейти к записи</a></p>
   </section>
 
   <section class="contacts-grid">
@@ -18,7 +19,7 @@
         <% if (errors.name) { %><small class="error"><%= errors.name %></small><% } %>
 
         <label for="contact-email">Email</label>
-        <input id="contact-email" name="email" type="email" autocomplete="email" value="<%= values.email || '' %>" required />
+        <input id="contact-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" value="<%= values.email || '' %>" required />
         <% if (errors.email) { %><small class="error"><%= errors.email %></small><% } %>
 
         <label for="contact-message">Сообщение</label>
@@ -58,6 +59,27 @@
         <span>Юридическая информация</span>
         <p>Kairos Therapy OÜ<br />Reg. nr. 17338080</p>
       </div>
+    </article>
+  </section>
+
+  <section class="feature-grid feature-grid-2 contact-quick-actions">
+    <article class="feature-card">
+      <h2>Когда лучше писать сюда</h2>
+      <ul class="bullet-list">
+        <li>если нужно уточнить организационный вопрос до записи</li>
+        <li>если вы хотите обсудить, какой формат может подойти лучше</li>
+        <li>если нужно связаться по поводу переноса или отмены</li>
+      </ul>
+    </article>
+
+    <article class="feature-card">
+      <h2>Когда быстрее идти в запись</h2>
+      <ul class="bullet-list">
+        <li>если вы уже готовы выбрать формат и удобный слот</li>
+        <li>если нужен минимальный и прямой путь к первой встрече</li>
+        <li>если legal и основные условия вы готовы открыть прямо внутри flow записи</li>
+      </ul>
+      <p><a class="btn" href="/booking#booking-form">Открыть форму записи</a></p>
     </article>
   </section>
 

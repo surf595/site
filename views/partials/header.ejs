@@ -1,14 +1,38 @@
+<%
+  const currentPath = page && page.currentPath ? page.currentPath : "";
+  const isNavActive = (href) => currentPath === href || (href !== "/" && currentPath.startsWith(`${href}/`));
+%>
+<a class="skip-link" href="#main-content">Перейти к содержимому</a>
 <header class="site-header">
   <div class="container header-row">
-    <a class="brand" href="/">Психологическая практика</a>
-    <button class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-nav">Меню</button>
+    <div class="brand-lockup">
+      <a class="brand" href="/">Психологическая практика</a>
+      <p class="brand-note">Таллин и онлайн</p>
+    </div>
+    <div class="header-actions">
+      <button class="menu-toggle" data-menu-toggle aria-expanded="false" aria-controls="site-nav" aria-label="Открыть меню">
+        <span class="menu-toggle-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </span>
+        <span class="menu-toggle-text" data-menu-toggle-label>Меню</span>
+      </button>
+    </div>
     <nav id="site-nav" class="main-nav" data-main-nav aria-label="Главное меню">
-      <ul>
-        <% nav.forEach((item) => { %>
-          <li><a href="<%= item.href %>"><%= item.label %></a></li>
-        <% }) %>
-      </ul>
+      <div class="main-nav-panel">
+        <p class="main-nav-kicker">Навигация</p>
+        <ul>
+          <% nav.forEach((item) => { %>
+            <% const isBooking = item.href === "/booking"; %>
+            <% const linkClass = `${isBooking ? "btn main-nav-booking" : ""}${isNavActive(item.href) ? `${isBooking ? " " : ""}is-active` : ""}`.trim(); %>
+            <li<%= isBooking ? ' class="nav-item-booking"' : '' %>>
+              <a href="<%= item.href %>"<%= linkClass ? ` class="${linkClass}"` : "" %><%= isNavActive(item.href) ? ' aria-current="page"' : '' %>><%= item.label %></a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
     </nav>
   </div>
 </header>
-<main class="container">
+<div class="menu-scrim" data-menu-scrim aria-hidden="true"></div>
+<main id="main-content" class="container">
